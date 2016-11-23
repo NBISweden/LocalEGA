@@ -31,8 +31,8 @@
 	url = git@github.com:NBISweden/LEGA-swagger-documentation-constants.git
 	branch = 0.0.1
 [submodule "simple-microservice"]
-        path = simple-microservice
-        url = ./simple-microservice
+	path = simple-microservice
+	url = git@github.com:NBISweden/LEGA-simple-microservice.git
 [submodule "another-simplemicroservice"]
-        path = another-simplemicroservice
-        url = ./another-simplemicroservice
+	path = another-simplemicroservice
+	url = git@github.com:NBISweden/LEGA-another-simplemicroservice.git
