@@ -36,3 +36,9 @@
 [submodule "another-simplemicroservice"]
 	path = another-simplemicroservice
 	url = ./another-simplemicroservice
+[submodule "crypto-microservice-stub"]
+	path = crypto-microservice-stub
+	url = git@github.com:NBISweden/LEGA-crypto-microservice-stub.git
+[submodule "ingestion-microservice"]
+	path = ingestion-microservice
+	url = git@github.com:NBISweden/LEGA-ingestion-microservice.git
