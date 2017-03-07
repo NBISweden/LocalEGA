@@ -30,12 +30,6 @@
 	path = swagger-documentation-constants
 	url = git@github.com:NBISweden/LEGA-swagger-documentation-constants.git
 	branch = 0.0.1
-[submodule "simple-microservice"]
-	path = simple-microservice
-	url = ./simple-microservice
-[submodule "another-simplemicroservice"]
-	path = another-simplemicroservice
-	url = ./another-simplemicroservice
 [submodule "crypto-microservice-stub"]
 	path = crypto-microservice-stub
 	url = git@github.com:NBISweden/LEGA-crypto-microservice-stub.git
