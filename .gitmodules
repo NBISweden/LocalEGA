@@ -42,3 +42,6 @@
 [submodule "ingestion-microservice"]
 	path = ingestion-microservice
 	url = git@github.com:NBISweden/LEGA-ingestion-microservice.git
+[submodule "sftp-inbox"]
+	path = sftp-inbox
+	url = git@github.com:NBISweden/LEGA-sftp-inbox.git
