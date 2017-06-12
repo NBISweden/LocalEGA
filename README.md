@@ -1,5 +1,7 @@
 # Local EGA implementation
 
+*Requirement of python version (>=3.6.1)
+
 This repo contains python code to start a _Local EGA_.
 
 LocalEGA comprises several components: worker(s), vault-listener, verification-step, connectors to CentralEGA, error-monitors, an sftp-inbox and a frontend.
