@@ -19,8 +19,8 @@ ARG PGADMIN4_VERSION=1.6
 RUN mkdir -p /var/src/pgadmin4
 WORKDIR /var/src/pgadmin4
 
-RUN curl -O https://ftp.postgresql.org/pub/pgadmin/pgadmin4/v${PGADMIN4_VERSION}/pip/pgadmin4-${PGADMIN4_VERSION}-py2.py3-none-any.whl && \
-    curl -O https://ftp.postgresql.org/pub/pgadmin/pgadmin4/v${PGADMIN4_VERSION}/pip/pgadmin4-${PGADMIN4_VERSION}-py2.py3-none-any.whl.sig && \
+RUN wget -c https://ftp.postgresql.org/pub/pgadmin/pgadmin4/v${PGADMIN4_VERSION}/pip/pgadmin4-${PGADMIN4_VERSION}-py2.py3-none-any.whl && \
+    wget -c https://ftp.postgresql.org/pub/pgadmin/pgadmin4/v${PGADMIN4_VERSION}/pip/pgadmin4-${PGADMIN4_VERSION}-py2.py3-none-any.whl.sig && \
     gpg --verify pgadmin4-${PGADMIN4_VERSION}-py2.py3-none-any.whl.sig
 
 RUN pip install --upgrade pip 
