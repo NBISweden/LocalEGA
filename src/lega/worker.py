@@ -54,15 +54,23 @@ def work(data):
     The hash algorithm we support are MD5 and SHA256, for the moment.
     '''
 
-    file_id = data['file_id']
-    user_id = data['user_id']
-    
+    filename = data['filename']
+    LOG.info(f"Processing {filename}")
+
+    # Use user_id, and not elixir_id
+    user_id = data['elixir_id'].split('@')[0]
+    del data['elixir_id']
+    data['user_id'] = user_id
+
+    # Insert in database
+    file_id = db.insert_file(filename, user_id) 
+    assert file_id is not None, 'Ouch...database problem!'
+    LOG.debug(f'Created id {file_id} for {filename}')
+    data['file_id'] = file_id
+
     # Find inbox
     inbox = Path( CONF.get('worker','inbox',raw=True) % { 'user_id': user_id } )
     LOG.info(f"Inbox area: {inbox}")
-
-    filename = data['filename']
-    LOG.info(f"Processing {filename}")
 
     # Check if file is in inbox
     inbox_filepath = inbox / filename
@@ -83,7 +91,7 @@ def work(data):
     assert( isinstance(encrypted_hash,str) )
     assert( isinstance(encrypted_algo,str) )
     
-    ################# Check integrity of encrypted file
+    # Check integrity of encrypted file
     LOG.debug(f"Verifying the {encrypted_algo} checksum of encrypted file: {inbox_filepath}")
     if not checksum.is_valid(inbox_filepath, encrypted_hash, hashAlgo = encrypted_algo):
         LOG.error(f"Invalid {encrypted_algo} checksum for {inbox_filepath}")
@@ -129,17 +137,19 @@ def work(data):
 
 def consume_forever():
 
-    connection = get_connection('local.broker')
-    channel = connection.channel()
-    channel.basic_qos(prefetch_count=1) # One job per worker
+    from_connection = get_connection('cega.broker')
+    from_channel = from_connection.channel()
+    from_channel.basic_qos(prefetch_count=1) # One job per worker
+
+    to_channel = get_connection('local.broker').channel()
 
     try:
-        consume(channel,
+        consume(from_channel,
                 work,
-                from_queue  = CONF.get('local.broker','tasks_queue'),
-                to_channel  = channel,
+                from_queue  = CONF.get('cega.broker','tasks_queue'),
+                to_channel  = to_channel,
                 to_exchange = CONF.get('local.broker','exchange'),
-                to_routing  = CONF.get('local.broker','routing_complete'))
+                to_routing  = CONF.get('local.broker','routing_file_complete'))
     except KeyboardInterrupt:
         channel.stop_consuming()
     finally:

@@ -48,7 +48,10 @@ def create_homedir(user_id):
 def work(data):
     '''Creates a user account, given the details from `data`.'''
 
-    user_id = data['user_id']
+    user_id = data['elixir_id'].split('@')[0]
+    del data['elixir_id']
+    data['user_id'] = user_id
+
     password_hash = data.get('password_hash', None)
     pubkey = data.get('pubkey',None)
     assert password_hash or pubkey
@@ -80,17 +83,17 @@ def main(args=None):
 
     LOG.info('Starting a connection to the local broker')
 
-    connection = get_connection('local.broker')
+    connection = get_connection('cega.broker')
     channel = connection.channel()
     channel.basic_qos(prefetch_count=1) # One job per worker
 
     try:
         consume(channel,
                 work,
-                from_queue  = CONF.get('local.broker','users_queue'),
+                from_queue  = CONF.get('cega.broker','users_queue'),
                 to_channel  = channel,
-                to_exchange = CONF.get('local.broker','exchange'),
-                to_routing  = CONF.get('local.broker','routing_account'))
+                to_exchange = CONF.get('cega.broker','exchange'),
+                to_routing  = CONF.get('cega.broker','routing_user_created'))
     except KeyboardInterrupt:
         channel.stop_consuming()
     finally:

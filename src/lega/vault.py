@@ -78,7 +78,7 @@ def main(args=None):
                  from_queue = CONF.get('local.broker','completed_queue'),
                  to_channel = channel,
                  to_exchange= CONF.get('local.broker','exchange'),
-                 to_routing = CONF.get('local.broker','routing_archived'))
+                 to_routing = CONF.get('local.broker','routing_file_archived'))
     except KeyboardInterrupt:
         channel.stop_consuming()
     finally:

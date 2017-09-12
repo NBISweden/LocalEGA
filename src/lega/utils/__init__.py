@@ -54,29 +54,3 @@ alphabet = string.ascii_letters + string.digits
 def generate_password(length):
     return ''.join(secrets.choice(alphabet) for i in range(length))
 
-
-def set_file_id(data):
-    '''Adding the related file into the database
-    and adding the return file id into the message'''
-
-    data['user_id'] = data['elixir_id'].split('@')[0]
-    del data['elixir_id']
-
-    filename = data['filename']
-    user_id = data['user_id']
-
-    # Insert in database
-    file_id = db.insert_file(filename, user_id) 
-    assert file_id is not None, 'Ouch...database problem!'
-    LOG.debug(f'Created id {file_id} for {filename}')
-
-    data['file_id'] = file_id
-    return data
-
-def sanitize_user_id(data):
-    '''Removes the @elixir-europe.org from the elixir ID.'''
-
-    data['user_id'] = data['elixir_id'].split('@')[0]
-    del data['elixir_id']
-
-    return data
