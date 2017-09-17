@@ -135,48 +135,16 @@ def work(data):
     LOG.debug(f"Reply message: {reply!r}")
     return reply
 
-def consume_forever():
-
-    from_connection = get_connection('cega.broker')
-    from_channel = from_connection.channel()
-    from_channel.basic_qos(prefetch_count=1) # One job per worker
-
-    to_channel = get_connection('local.broker').channel()
-
-    try:
-        consume(from_channel,
-                work,
-                from_queue  = CONF.get('cega.broker','tasks_queue'),
-                to_channel  = to_channel,
-                to_exchange = CONF.get('local.broker','exchange'),
-                to_routing  = CONF.get('local.broker','routing_file_complete'))
-    except KeyboardInterrupt:
-        channel.stop_consuming()
-    finally:
-        connection.close()
-
 def main(args=None):
     if not args:
         args = sys.argv[1:]
 
     CONF.setup(args) # re-conf
 
-    if hasattr(os, 'sched_getaffinity'):
-        nb_cores = len(os.sched_getaffinity(0))
-    else:
-        nb_cores = cpu_count()
+    from_broker = (get_connection('cega.broker'), 'sweden.v1.commands.file')
+    to_broker = (get_connection('local.broker'), 'lega', 'lega.complete')
 
-    LOG.debug(f'Number of Cores: {nb_cores}')
-
-    extra_workers = []
-    for _ in range(2, nb_cores, 2):
-        p = Process(group=None, target=consume_forever) # no name
-        p.start()
-        extra_workers.append(p)
-        
-    if extra_workers:
-        LOG.info(f'Starting {len(extra_workers)} extra workers')
-    consume_forever() # and this one
+    consume(from_broker, work, to_broker)
 
 if __name__ == '__main__':
     main()

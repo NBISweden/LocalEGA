@@ -81,23 +81,10 @@ def main(args=None):
 
     CONF.setup(args) # re-conf
 
-    LOG.info('Starting a connection to the local broker')
-
     connection = get_connection('cega.broker')
-    channel = connection.channel()
-    channel.basic_qos(prefetch_count=1) # One job per worker
-
-    try:
-        consume(channel,
-                work,
-                from_queue  = CONF.get('cega.broker','users_queue'),
-                to_channel  = channel,
-                to_exchange = CONF.get('cega.broker','exchange'),
-                to_routing  = CONF.get('cega.broker','routing_user_created'))
-    except KeyboardInterrupt:
-        channel.stop_consuming()
-    finally:
-        connection.close()
+    from_broker = (connection, 'sweden.v1.commands.user')
+    to_broker = (connection, 'localega.v1', 'sweden.user.account')
+    consume(from_broker, work, to_broker)
 
 if __name__ == '__main__':
     main()
