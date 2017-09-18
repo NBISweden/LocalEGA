@@ -42,15 +42,13 @@ def db_log_error_on_files(func):
             db.set_error(file_id, e)
     return wrapper
 
-def get_data(data):
-    try:
-        return json.loads(b64decode(data))
-    except Exception as e:
-        print(repr(e))
-        return None
-    #return json.loads(msgpack.unpackb(data))
+def sanitize_user_id(data):
+    '''Removes the elixir_id from data and adds user_id instead'''
 
-alphabet = string.ascii_letters + string.digits
-def generate_password(length):
-    return ''.join(secrets.choice(alphabet) for i in range(length))
+    # Elixir id is of the following form:
+    # [a-z_][a-z0-9_-]*? that ends with a fixed @elixir-europe.org
 
+    user_id = data['elixir_id'].split('@')[0]
+    del data['elixir_id']
+    data['user_id'] = user_id
+    return user_id

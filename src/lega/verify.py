@@ -45,8 +45,7 @@ def main(args=None):
     CONF.setup(args) # re-conf
 
     from_broker = (get_connection('local.broker'), 'archived')
-    to_broker = (get_connection('cega.broker'), 'localega.v1', 'sweden.file.completed')
-
+    to_broker = (get_connection('cega.broker'), CONF.get('cega.broker','exchange'), CONF.get('cega.broker','file_routing'))
     consume(from_broker, work, to_broker)
 
 if __name__ == '__main__':

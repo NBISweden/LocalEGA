@@ -58,18 +58,14 @@ def work(data):
     LOG.info(f"Processing {filename}")
 
     # Use user_id, and not elixir_id
-    user_id = data['elixir_id'].split('@')[0]
-    del data['elixir_id']
-    data['user_id'] = user_id
+    user_id = sanitize_user_id(data)
 
     # Insert in database
-    file_id = db.insert_file(filename, user_id) 
-    assert file_id is not None, 'Ouch...database problem!'
-    LOG.debug(f'Created id {file_id} for {filename}')
+    file_id = db.insert_file(filename, user_id)
     data['file_id'] = file_id
 
     # Find inbox
-    inbox = Path( CONF.get('worker','inbox',raw=True) % { 'user_id': user_id } )
+    inbox = Path( CONF.get('ingestion','inbox',raw=True) % { 'user_id': user_id } )
     LOG.info(f"Inbox area: {inbox}")
 
     # Check if file is in inbox
@@ -99,7 +95,7 @@ def work(data):
     LOG.debug(f'Valid {encrypted_algo} checksum for {inbox_filepath}')
 
     # Fetch staging area
-    staging_area = Path( CONF.get('worker','staging') )
+    staging_area = Path( CONF.get('ingestion','staging') )
     LOG.info(f"Staging area: {staging_area}")
     #staging_area.mkdir(parents=True, exist_ok=True) # re-create
         
@@ -123,6 +119,9 @@ def work(data):
     details, staging_checksum = crypto_ingest( str(inbox_filepath),
                                                unencrypted_hash,
                                                hash_algo = unencrypted_algo,
+                                               pgp_key=pgp_seckey,
+                                               pgp_passphrase=pgp_passphrase,
+                                               master_key=master_pubkey,
                                                target = staging_filepath)
     db.set_encryption(file_id, details, staging_checksum)
     LOG.debug(f'Re-encryption completed')
@@ -141,9 +140,8 @@ def main(args=None):
 
     CONF.setup(args) # re-conf
 
-    from_broker = (get_connection('cega.broker'), 'sweden.v1.commands.file')
+    from_broker = (get_connection('cega.broker'), CONF.get('cega.broker','file_queue'))
     to_broker = (get_connection('local.broker'), 'lega', 'lega.complete')
-
     consume(from_broker, work, to_broker)
 
 if __name__ == '__main__':
