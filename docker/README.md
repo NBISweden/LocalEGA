@@ -47,11 +47,11 @@ The RSA master key can be created by OpenSSL with the following command
 
 * First create the private key
 
-    `openssl genrsa -des3 -out ega.pem 2048`
+        openssl genrsa -des3 -out ega.pem 2048
 
 * Then output the public key
 
-    `openssl rsa -in private.pem -outform PEM -pubout -out ega-public.pem`
+        openssl rsa -in private.pem -outform PEM -pubout -out ega-public.pem
 
 ## Running
 
