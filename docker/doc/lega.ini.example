@@ -1,0 +1,59 @@
+[DEFAULT]
+log_conf = debug 
+
+[frontend]
+host = ega_frontend 
+port = 9000
+
+[worker]
+# GPG
+gpg_cmd = /usr/local/bin/gpg --homedir /root/.gnupg --decrypt %(file)s
+
+# RSA master key
+active_key = 1
+master_key = /root/.rsa/ega.pem 
+master_pub_key = /root/.rsa/ega-public.pem
+master_key_passphrase = <your passphrase for the master key>
+
+inbox = /ega/inbox/%(user_id)s/inbox
+staging = /ega/staging
+
+[vault]
+# location is actually the location of vault
+location = /ega/vault
+
+
+## Connecting to Local Broker
+[local.broker]
+host = ega_mq 
+#enable_ssl = no
+
+## Connecting to Central EGA
+[cega.broker]
+# enable_ssl = no
+host = ega_mq 
+username = test
+password = <ask the developer>
+vhost = test 
+enable_ssl = no
+heartbeat = 0
+
+[db]
+# username and the password for db are the same as set in .env.d/db
+username = postgres
+password = mysecretpassword
+dbname = lega
+host = ega_db 
+#port = 5432
+
+
+[inbox]
+user_home = /home/%(user_id)s
+home_skel = /ega/skel
+create_account = useradd -u {user_id} -g sftp_users --home {home} --comment "{comment}" {user_id}
+
+[master.key.1]
+key = /root/.rsa/ega.pem
+pub_key = /root/.rsa/ega-public.pem
+passphrase = <your passphrase for the key>
+
