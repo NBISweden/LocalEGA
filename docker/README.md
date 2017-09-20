@@ -9,8 +9,8 @@ It is necessary to also create a `.env` file with the following variables:
 	COMPOSE_PROJECT_NAME=ega
 	CODE=<python/code/folder>    # path to folder where setup.py is
 	CONF=<path/to/your/ini/file> # will be mounted in the containers as /etc/ega/conf.ini
-	RSA_HOME=<folder>         # mapped to /root/.rsa on the ega-workers
-	GPG_HOME=<folder>         # Used on the agent-forwarder and the workers
+	RSA_HOME=<folder>            # mapped to /root/.rsa on the ega-workers
+	GPG_HOME=<folder>            # Used on the agent-forwarder and the workers
 
 An example for the `CONF` file can be found at [doc/lega.ini.example](doc/lega.ini.example),
 but you need to modify passwords and passphrasees with your own settings.
