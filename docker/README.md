@@ -5,8 +5,8 @@
 It is necessary to also create a `.env` file with the following variables:
 (mostly used to parameterize the docker-compose file itself)
 
-An example for the `CONF` file can be found at [a relative link](doc/lega.ini.example),
-but you need to modify passwords and passphrasees accordingly
+An example for the `CONF` file can be found at [doc/lega.ini.example](doc/lega.ini.example),
+but you need to modify passwords and passphrasees with your own settings.
 
 	COMPOSE_PROJECT_NAME=ega
 	CODE=<python/code/folder>    # path to folder where setup.py is
