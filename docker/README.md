@@ -5,8 +5,6 @@
 It is necessary to also create a `.env` file with the following variables:
 (mostly used to parameterize the docker-compose file itself)
 
-An example for the `CONF` file can be found at [doc/lega.ini.example](doc/lega.ini.example),
-but you need to modify passwords and passphrasees with your own settings.
 
 	COMPOSE_PROJECT_NAME=ega
 	CODE=<python/code/folder>    # path to folder where setup.py is
@@ -14,6 +12,8 @@ but you need to modify passwords and passphrasees with your own settings.
 	RSA_HOME=<folder>         # mapped to /root/.rsa on the ega-workers
 	GPG_HOME=<folder>         # Used on the agent-forwarder and the workers
 
+An example for the `CONF` file can be found at [doc/lega.ini.example](doc/lega.ini.example),
+but you need to modify passwords and passphrasees with your own settings.
 
 The folder referenced by `GPG_HOME` should contain the following:
 
@@ -26,6 +26,11 @@ The folder referenced by `GPG_HOME` should contain the following:
 | `certs/selfsigned.{cert,key}` | ... ssl encryption of the traffic between the workers and the gpg-agent master |
 
 These files are created in advance by GPG (version 2.1+).
+You may use the the batch file
+[doc/conf-create-gpg-key.example](doc/conf-create-gpg-key.example) to create
+all files needed with the following command
+
+    gpg2 --homedir $GPG\_HOME --batch --generate-key conf-create-gpg-key.example
 
 Moreover, some of the containers need extra variables. There are located in:
 * `.env.d/gpg` with
@@ -37,6 +42,16 @@ GPG_PASSPHRASE=<something-complex>
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=<some-password>
 ```
+
+The RSA master key can be created by OpenSSL with the following command
+
+* First create the private key
+
+    openssl genrsa -des3 -out ega.pem 2048
+
+* Then output the public key
+
+    openssl rsa -in private.pem -outform PEM -pubout -out ega-public.pem
 
 ## Running
 
