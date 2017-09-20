@@ -30,7 +30,7 @@ You may use the the batch file
 [doc/conf-create-gpg-key.example](doc/conf-create-gpg-key.example) to create
 all files needed with the following command
 
-    gpg2 --homedir $GPG\_HOME --batch --generate-key conf-create-gpg-key.example
+    gpg2 --homedir $GPG_HOME --batch --generate-key conf-create-gpg-key.example
 
 Moreover, some of the containers need extra variables. There are located in:
 * `.env.d/gpg` with
