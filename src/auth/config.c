@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <ctype.h>
 
 #include "debug.h"
 #include "config.h"
@@ -11,7 +12,7 @@ options_t* options = NULL;
 void
 cleanconfig(void)
 {
-  if(!options) return; /* Just in case, I'm an idiot and call it too early */
+  if(!options) return;
 
   SYSLOG("Cleaning the config struct");
   /* if(!options->cfgfile           ) { free(options->cfgfile);        } */
@@ -33,9 +34,11 @@ readconfig(char* configfile)
   size_t len = 0;
   char *key,*eq,*val,*end;
 
-  if(options) return; /* Done already */
+  D("EGA %-10s: Called %s (cfgfile: %s)\n", __FILE__, __FUNCTION__, configfile);
 
-  SYSLOG("Loading configuration (from %s)", configfile);
+  if(options) return true; /* Done already */
+
+  SYSLOG("Loading configuration %s", configfile);
 
   /* read or re-read */
   fp = fopen(configfile, "r");
@@ -97,5 +100,7 @@ readconfig(char* configfile)
 
   fclose(fp);
   if (line) { free(line); }
+
+  D("options: %p\n", options);
   return true;
 }
