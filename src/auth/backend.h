@@ -11,4 +11,6 @@ void backend_close(void);
 
 enum nss_status backend_get_userentry(const char *name, struct passwd *result, char** buffer, size_t* buflen, int* errnop);
 
+bool backend_authenticate(const char *user, const char *pwd);
+
 #endif /* !__LEGA_BACKEND_H_INCLUDED__ */

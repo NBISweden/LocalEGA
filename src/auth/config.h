@@ -4,13 +4,14 @@
 #include <stdbool.h>
 
 #define CFGFILE "/etc/ega/auth.conf"
+#define PAM_PROMPT "Please, enter your EGA password: "
 #define ENABLE_REST false
 #define BUFFER_REST 1024
 
 struct options_s {
   bool debug;
-  char* cfgfile;
-
+  const char* cfgfile;
+  
   /* Database cache connection */
   char* db_connstr;
 
@@ -20,6 +21,7 @@ struct options_s {
   /* PAM queries */
   char* pam_auth;       /* SELECT password_hash FROM users WHERE elixir_id = $1 */
   char* pam_acct;       /* SELECT password_hash FROM users WHERE elixir_id = $1 */
+  char* pam_prompt;     /* Please enter password */
 
   int pam_flags;        /* PAM module flags, like debug of conf_file */
 
@@ -33,7 +35,7 @@ typedef struct options_s options_t;
 
 extern options_t* options;
 
-bool readconfig(char* configfile);
+bool readconfig(const char* configfile);
 void cleanconfig(void);
 
 #endif /* !__LEGA_CONFIG_H_INCLUDED__ */

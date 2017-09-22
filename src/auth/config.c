@@ -21,12 +21,13 @@ cleanconfig(void)
   if(!options->pam_auth          ) { free(options->pam_auth);       }
   if(!options->pam_acct          ) { free(options->pam_acct);       }
   if(!options->rest_endpoint     ) { free(options->rest_endpoint);  }
+  if(!options->pam_prompt        ) { free(options->pam_prompt);     }
   free(options);
   return;
 }
 
 bool
-readconfig(char* configfile)
+readconfig(const char* configfile)
 {
 
   FILE* fp;
@@ -86,6 +87,7 @@ readconfig(char* configfile)
     if(!strcmp(key, "nss_user_entry"    )) { options->nss_user_entry = strdup(val); }
     if(!strcmp(key, "pam_auth"          )) { options->pam_auth = strdup(val);       }
     if(!strcmp(key, "pam_acct"          )) { options->pam_acct = strdup(val);       }
+    if(!strcmp(key, "pam_prompt"        )) { options->pam_prompt = strdup(val);     }
     if(!strcmp(key, "rest_endpoint"     )) { options->rest_endpoint = strdup(val);  }
     if(!strcmp(key, "rest_buffer_size"  )) { options->rest_buffer_size = atoi(val); }
     if(!strcmp(key, "enable_rest")) {

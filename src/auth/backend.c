@@ -87,43 +87,32 @@ _res2pwd(PGresult *res, int row, int col,
 /*
  * 'convert' a PGresult to struct passwd
  */
-enum nss_status res2pwd(PGresult *res, struct passwd *result,
-                        char **buffer, size_t *buflen,
-			int *errnop)
+enum nss_status
+res2pwd(PGresult *res, struct passwd *result, char **buffer, size_t *buflen, int *errnop)
 {
   enum nss_status status = NSS_STATUS_NOTFOUND;
 
-  if(!PQntuples(res)) goto BAIL_OUT;
+  if(!PQntuples(res)) return status;
 
   status = _res2pwd(res, 0, COL_NAME, &(result->pw_name), buffer, buflen, errnop);
-  if(status != NSS_STATUS_SUCCESS) goto BAIL_OUT;
+  if(status != NSS_STATUS_SUCCESS) return status;
 
   status = _res2pwd(res, 0, COL_PASSWD, &(result->pw_passwd), buffer, buflen, errnop);
-  if(status != NSS_STATUS_SUCCESS) goto BAIL_OUT;
+  if(status != NSS_STATUS_SUCCESS) return status;
 
   status = _res2pwd(res, 0, COL_GECOS, &(result->pw_gecos), buffer, buflen, errnop);
-  if(status != NSS_STATUS_SUCCESS) goto BAIL_OUT;
+  if(status != NSS_STATUS_SUCCESS) return status;
 
   status = _res2pwd(res, 0, COL_DIR, &(result->pw_dir), buffer, buflen, errnop);
-  if(status != NSS_STATUS_SUCCESS) goto BAIL_OUT;
+  if(status != NSS_STATUS_SUCCESS) return status;
 
   status = _res2pwd(res, 0, COL_SHELL, &(result->pw_shell), buffer, buflen, errnop);
-  if(status != NSS_STATUS_SUCCESS) goto BAIL_OUT;
+  if(status != NSS_STATUS_SUCCESS) return status;
 
   result->pw_uid = (uid_t) strtoul(PQgetvalue(res, 0, COL_UID), (char**)NULL, 10);
   result->pw_gid = (gid_t) strtoul(PQgetvalue(res, 0, COL_GID), (char**)NULL, 10);
 
-  DBGLOG("Converted a res to a pwd:");
-  DBGLOG("UID: %d", result->pw_uid);
-  DBGLOG("GID: %d", result->pw_gid);
-  DBGLOG("Name: %s", result->pw_name);
-  DBGLOG("Password: %s", result->pw_passwd);
-  DBGLOG("Gecos: %s", result->pw_gecos);
-  DBGLOG("Dir: %s", result->pw_dir);
-  DBGLOG("Shell: %s", result->pw_shell);
-
-BAIL_OUT:
-  return status;
+  return NSS_STATUS_SUCCESS;
 }
 
 /*
@@ -136,16 +125,13 @@ backend_get_userentry(const char *username,
 		      int *errnop)
 {
   enum nss_status status = NSS_STATUS_NOTFOUND;
-  const char* params[1];
+  const char* params[1] = { username };
   PGresult *res;
 
   D("EGA %-10s: Called %s\n", __FILE__, __FUNCTION__);
 
   if(!backend_open(0)) return NSS_STATUS_UNAVAIL;
 
-  D("Request: %s\n", options->nss_user_entry);
-
-  params[0] = username;
   res = PQexecParams(conn, options->nss_user_entry, 1, NULL, params, NULL, NULL, 0);
   if(PQresultStatus(res) == PGRES_TUPLES_OK) {
     /* convert to pwd */
@@ -156,3 +142,9 @@ backend_get_userentry(const char *username,
 }
 
 // Contact CRG with REST. returns EAGAIN on failure
+
+bool
+backend_authenticate(const char *user, const char *password)
+{
+  return false;
+}
