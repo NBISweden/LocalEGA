@@ -16,12 +16,13 @@ cleanconfig(void)
 
   SYSLOG("Cleaning the config struct");
   /* if(!options->cfgfile           ) { free(options->cfgfile);        } */
-  if(!options->db_connstr        ) { free(options->db_connstr);     }
-  if(!options->nss_user_entry    ) { free(options->nss_user_entry); }
-  if(!options->pam_auth          ) { free(options->pam_auth);       }
-  if(!options->pam_acct          ) { free(options->pam_acct);       }
-  if(!options->rest_endpoint     ) { free(options->rest_endpoint);  }
-  if(!options->pam_prompt        ) { free(options->pam_prompt);     }
+  if(!options->db_connstr        ) { free((char*)options->db_connstr);     }
+  if(!options->nss_get_user      ) { free((char*)options->nss_get_user);   }
+  if(!options->nss_add_user      ) { free((char*)options->nss_add_user);   }
+  if(!options->pam_auth          ) { free((char*)options->pam_auth);       }
+  if(!options->pam_acct          ) { free((char*)options->pam_acct);       }
+  if(!options->rest_endpoint     ) { free((char*)options->rest_endpoint);  }
+  if(!options->pam_prompt        ) { free((char*)options->pam_prompt);     }
   free(options);
   return;
 }
@@ -35,7 +36,7 @@ readconfig(const char* configfile)
   size_t len = 0;
   char *key,*eq,*val,*end;
 
-  D("EGA %-10s: Called %s (cfgfile: %s)\n", __FILE__, __FUNCTION__, configfile);
+  D("called (cfgfile: %s)\n", configfile);
 
   if(options) return true; /* Done already */
 
@@ -84,7 +85,8 @@ readconfig(const char* configfile)
 	
     if(!strcmp(key, "debug"             )) { options->debug = true;                 }
     if(!strcmp(key, "db_connection"     )) { options->db_connstr = strdup(val);     }
-    if(!strcmp(key, "nss_user_entry"    )) { options->nss_user_entry = strdup(val); }
+    if(!strcmp(key, "nss_get_user"      )) { options->nss_get_user = strdup(val);   }
+    if(!strcmp(key, "nss_add_user"      )) { options->nss_add_user = strdup(val);   }
     if(!strcmp(key, "pam_auth"          )) { options->pam_auth = strdup(val);       }
     if(!strcmp(key, "pam_acct"          )) { options->pam_acct = strdup(val);       }
     if(!strcmp(key, "pam_prompt"        )) { options->pam_prompt = strdup(val);     }

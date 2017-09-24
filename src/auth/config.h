@@ -16,18 +16,19 @@ struct options_s {
   char* db_connstr;
 
   /* NSS queries */
-  char* nss_user_entry; /* SELECT elixir_id,'x',<uid>,<gid>,'EGA User','/ega/inbox/'|| elixir_id,'/bin/bash' FROM users WHERE elixir_id = $1 */
+  const char* nss_get_user; /* SELECT elixir_id,'x',<uid>,<gid>,'EGA User','/ega/inbox/'|| elixir_id,'/bin/bash' FROM users WHERE elixir_id = $1 */
+  const char* nss_add_user; /* INSERT INTO users (elixir_id, password_hash, pubkey) VALUES($1,$2,$3) */
 
   /* PAM queries */
-  char* pam_auth;       /* SELECT password_hash FROM users WHERE elixir_id = $1 */
-  char* pam_acct;       /* SELECT password_hash FROM users WHERE elixir_id = $1 */
-  char* pam_prompt;     /* Please enter password */
+  const char* pam_auth;       /* SELECT password_hash FROM users WHERE elixir_id = $1 */
+  const char* pam_acct;       /* SELECT password_hash FROM users WHERE elixir_id = $1 */
+  const char* pam_prompt;     /* Please enter password */
 
   int pam_flags;        /* PAM module flags, like debug of conf_file */
 
   /* ReST location */
   bool with_rest;        /* enable the lookup in case the entry is not found in the database cache */
-  char* rest_endpoint;   /* https://ega/user/<some-id> | returns a triplet in JSON format */
+  const char* rest_endpoint;   /* https://ega/user/<some-id> | returns a triplet in JSON format */
   int rest_buffer_size;  /* 1024 */
 };
 

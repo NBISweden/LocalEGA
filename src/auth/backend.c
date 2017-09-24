@@ -4,9 +4,11 @@
 #include <errno.h>
 #include <libpq-fe.h>
 
+
 #include "debug.h"
 #include "config.h"
 #include "backend.h"
+#include "cega.h"
 
 /* define passwd column names */
 #define COL_NAME   0
@@ -23,9 +25,9 @@ static PGconn* conn;
 bool
 backend_open(int stayopen)
 {
-  D("EGA %-10s: Called %s (stayopen: %d)\n", __FILE__, __FUNCTION__, stayopen);
+  D("called with args: stayopen: %d\n", stayopen);
   if(!readconfig(CFGFILE)){
-    D("Can't read config\n");
+    D("%s", "Can't read config");
     return false;
   }
   if(!conn){
@@ -48,7 +50,7 @@ backend_open(int stayopen)
 void
 backend_close(void)
 { 
-  D("EGA %-10s: Called %s\n", __FILE__, __FUNCTION__);
+  D("%s", "called");
   if (conn) PQfinish(conn);
   conn = NULL;
 }
@@ -88,12 +90,20 @@ _res2pwd(PGresult *res, int row, int col,
  * 'convert' a PGresult to struct passwd
  */
 enum nss_status
-res2pwd(PGresult *res, struct passwd *result, char **buffer, size_t *buflen, int *errnop)
+get_from_db(const char* username, struct passwd *result, char **buffer, size_t *buflen, int *errnop)
 {
   enum nss_status status = NSS_STATUS_NOTFOUND;
+  const char* params[1] = { username };
+  PGresult *res;
 
-  if(!PQntuples(res)) return status;
+  D("nss user query: %s\n", options->nss_get_user);
+  res = PQexecParams(conn, options->nss_get_user, 1, NULL, params, NULL, NULL, 0);
 
+  if(PQresultStatus(res) != PGRES_TUPLES_OK) goto BAIL_OUT;
+
+  if(!PQntuples(res)) goto BAIL_OUT; /* Answer is not a tuple: User not found */
+
+  /* no error, let's convert the result to a struct pwd */
   status = _res2pwd(res, 0, COL_NAME, &(result->pw_name), buffer, buflen, errnop);
   if(status != NSS_STATUS_SUCCESS) return status;
 
@@ -112,8 +122,13 @@ res2pwd(PGresult *res, struct passwd *result, char **buffer, size_t *buflen, int
   result->pw_uid = (uid_t) strtoul(PQgetvalue(res, 0, COL_UID), (char**)NULL, 10);
   result->pw_gid = (gid_t) strtoul(PQgetvalue(res, 0, COL_GID), (char**)NULL, 10);
 
-  return NSS_STATUS_SUCCESS;
+  status = NSS_STATUS_SUCCESS;
+
+BAIL_OUT:
+  PQclear(res);
+  return status;
 }
+
 
 /*
  * Get one entry from the Postgres result
@@ -124,24 +139,31 @@ backend_get_userentry(const char *username,
 		      char **buffer, size_t *buflen,
 		      int *errnop)
 {
-  enum nss_status status = NSS_STATUS_NOTFOUND;
-  const char* params[1] = { username };
-  PGresult *res;
-
-  D("EGA %-10s: Called %s\n", __FILE__, __FUNCTION__);
+  D("called\n");
 
   if(!backend_open(0)) return NSS_STATUS_UNAVAIL;
 
-  res = PQexecParams(conn, options->nss_user_entry, 1, NULL, params, NULL, NULL, 0);
-  if(PQresultStatus(res) == PGRES_TUPLES_OK) {
-    /* convert to pwd */
-    status = res2pwd(res, result, buffer, buflen, errnop);
-  }
-  PQclear(res);
-  return status;
-}
+  if( get_from_db(username, result, buffer, buflen, errnop) )
+    return NSS_STATUS_SUCCESS;
 
-// Contact CRG with REST. returns EAGAIN on failure
+  /* OK, User not found in DB */
+
+  /* if REST disabled */
+  if(!options->with_rest){
+    D("contacting cega for user: %s is disabled\n", username);
+    return NSS_STATUS_NOTFOUND;
+  }
+    
+  if(!fetch_from_cega(username, buffer, buflen, errnop))
+    return NSS_STATUS_NOTFOUND;
+
+  /* User retrieved from Central EGA, try again the DB */
+  if( get_from_db(username, result, buffer, buflen, errnop) )
+    return NSS_STATUS_SUCCESS;
+
+  /* No luck, user not found */
+  return NSS_STATUS_NOTFOUND;
+}
 
 bool
 backend_authenticate(const char *user, const char *password)
