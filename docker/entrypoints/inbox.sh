@@ -7,14 +7,12 @@ chmod 750 /ega/inbox
 chmod g+s /ega/inbox # setgid bit
 
 pushd /root/ega/auth
-make
 make install
+ldconfig -v
 popd
 
-ldconfig -v
-
 mkdir -p /etc/ega
-cat > /etc/ega/auth.conf <<EOF
+cat > /etc/ega/auth.conf <<'EOF'
 debug = ok_why_not
 
 ##################
@@ -22,13 +20,14 @@ debug = ok_why_not
 ##################
 db_connection = host=172.18.0.2 port=5432 dbname=lega user=postgres password=mysecretpassword connect_timeout=1 sslmode=disable
 
-#enable_rest = no
-rest_endpoint = https://ega.crg.eu/users/%s
+enable_rest = yes
+rest_endpoint = http://localhost:9100/user/%s
 
 ##################
 # NSS Queries
 ##################
-nss_user_entry = SELECT elixir_id,'x',1000,1000,'EGA User','/ega/inbox/'|| elixir_id,'/bin/bash' FROM users WHERE elixir_id = $1 LIMIT 1
+nss_get_user = SELECT elixir_id,'x',1000,1000,'EGA User','/ega/inbox/'|| elixir_id,'/bin/bash' FROM users WHERE elixir_id = $1 LIMIT 1
+nss_add_user = SELECT insert_user($1,$2,$3)
 
 ##################
 # PAM Queries

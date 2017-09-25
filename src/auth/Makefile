@@ -6,8 +6,8 @@ PAM_LIBRARY = pam_ega.so
 
 CC=gcc
 LD=ld
-CFLAGS=-Wall -Wstrict-prototypes -Werror -fPIC -O2 -I. -I/usr/pgsql-9.6/include
-LIBS=-lpq -lpam
+CFLAGS=-Wall -Wstrict-prototypes -Werror -fPIC -O2 -I. -I$(shell pg_config --includedir)
+LIBS=-lpq -lpam -lcurl -ljson-c -L$(shell pg_config --libdir)
 
 LIBDIR=/usr/local/lib/ega
 

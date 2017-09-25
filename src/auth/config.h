@@ -4,9 +4,10 @@
 #include <stdbool.h>
 
 #define CFGFILE "/etc/ega/auth.conf"
-#define PAM_PROMPT "Please, enter your EGA password: "
 #define ENABLE_REST false
 #define BUFFER_REST 1024
+#define CEGA_CERT "/etc/ega/cega.pem"
+#define PAM_PROMPT "Please, enter your EGA password: "
 
 struct options_s {
   bool debug;
@@ -27,9 +28,10 @@ struct options_s {
   int pam_flags;        /* PAM module flags, like debug of conf_file */
 
   /* ReST location */
-  bool with_rest;        /* enable the lookup in case the entry is not found in the database cache */
-  const char* rest_endpoint;   /* https://ega/user/<some-id> | returns a triplet in JSON format */
-  int rest_buffer_size;  /* 1024 */
+  bool with_rest;             /* enable the lookup in case the entry is not found in the database cache */
+  const char* rest_endpoint;  /* https://ega/user/<some-id> | returns a triplet in JSON format */
+  int rest_buffer_size;       /* 1024 */
+  const char* ssl_cert;       /* path the SSL certificate to contact Central EGA */
 };
 
 typedef struct options_s options_t;

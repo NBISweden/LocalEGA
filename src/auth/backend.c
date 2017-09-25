@@ -96,7 +96,8 @@ get_from_db(const char* username, struct passwd *result, char **buffer, size_t *
   const char* params[1] = { username };
   PGresult *res;
 
-  D("nss user query: %s\n", options->nss_get_user);
+  D("Prepared Statement: %s\n", options->nss_get_user);
+  D("with '%s'\n", username);
   res = PQexecParams(conn, options->nss_get_user, 1, NULL, params, NULL, NULL, 0);
 
   if(PQresultStatus(res) != PGRES_TUPLES_OK) goto BAIL_OUT;
@@ -127,6 +128,23 @@ get_from_db(const char* username, struct passwd *result, char **buffer, size_t *
 BAIL_OUT:
   PQclear(res);
   return status;
+}
+
+bool
+add_to_db(const char* username, const char* pwdh, const char* pubkey)
+{
+  const char* params[3] = { username, pwdh, pubkey};
+  PGresult *res;
+  bool success;
+
+  D("Prepared Statement: %s\n", options->nss_add_user);
+  D("with VALUES('%s','%s','%s')\n", username, pwdh, pubkey);
+  res = PQexecParams(conn, options->nss_add_user, 3, NULL, params, NULL, NULL, 0);
+
+  success = (PQresultStatus(res) == PGRES_TUPLES_OK);
+  if(!success) D("%s\n", PQerrorMessage(conn));
+  PQclear(res);
+  return success;
 }
 
 
