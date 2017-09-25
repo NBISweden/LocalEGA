@@ -27,6 +27,13 @@
 	             fprintf(stderr, ##x);                                                           \
                 } while(0);
 
+#define PAMD(x...) do {                                          \
+                          openlog("EGA_auth", LOG_PID, LOG_USER);   \
+			  syslog(LOG_INFO, "EGA %-10s | %4d | %22s | ", __FILE__, __LINE__, __FUNCTION__); \
+	                  syslog(LOG_AUTH, ##x);                \
+                          closelog();                               \
+                      } while(0);
+
 /* #undef DBGLOG */
 /* #undef SYSLOG */
 /* #undef AUTHLOG */

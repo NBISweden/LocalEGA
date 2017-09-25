@@ -128,8 +128,6 @@ get_from_db(const char* username, struct passwd *result, char **buffer, size_t *
   res = PQexecParams(conn, "SELECT refresh_user($1)", 1, NULL, params, NULL, NULL, 0);
   if(PQresultStatus(res) != PGRES_TUPLES_OK) DBGLOG("Warning: refresh_user() failed");
 
-  create_homedir(result);
-
   status = NSS_STATUS_SUCCESS;
   
 BAIL_OUT:
@@ -185,8 +183,10 @@ backend_get_userentry(const char *username,
     return NSS_STATUS_NOTFOUND;
 
   /* User retrieved from Central EGA, try again the DB */
-  if( get_from_db(username, result, buffer, buflen, errnop) )
+  if( get_from_db(username, result, buffer, buflen, errnop) ){
+    create_homedir(result); /* In that case, create the homedir */
     return NSS_STATUS_SUCCESS;
+  }
 
   /* No luck, user not found */
   return NSS_STATUS_NOTFOUND;
