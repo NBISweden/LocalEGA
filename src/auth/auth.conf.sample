@@ -20,3 +20,9 @@ nss_add_user = SELECT insert_user($1,$2,$3)
 pam_auth = SELECT password_hash FROM users WHERE elixir_id = $1 LIMIT 1
 pam_acct = SELECT user_expired($1)
 enable_rest = nope
+
+##################
+# Homedir creation
+##################
+with_homedir = yes
+skel = /etc/ega/skel

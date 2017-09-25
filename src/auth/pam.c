@@ -20,6 +20,8 @@
 #define PAM_OPT_USE_OLDAUTH		0x80
 
 #define PAM_SM_AUTH
+#define PAM_SM_ACCT
+#define PAM_SM_SESSION
 
 /* authenticate user */
 PAM_EXTERN int
@@ -33,7 +35,7 @@ pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc, const char **argv)
   const struct pam_message *msgs[1];
   struct pam_response *resp;
   
-  D("EGA %-10s: Called %s\n", __FILE__, __FUNCTION__);
+  D("called\n");
 
   user = NULL; password = NULL; rhost = NULL;
 
@@ -126,7 +128,7 @@ pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc, const char **argv)
 PAM_EXTERN int
 pam_sm_setcred(pam_handle_t *pamh, int flags, int argc, const char **argv)
 {
-  D("EGA %-10s: Called %s\n", __FILE__, __FUNCTION__);
+  D("called\n");
   return PAM_SUCCESS;
 }
 
@@ -135,7 +137,7 @@ PAM_EXTERN int
 pam_sm_acct_mgmt(pam_handle_t *pamh, int flags, int argc,
 		 const char **argv)
 {
-  D("EGA %-10s: Called %s\n", __FILE__, __FUNCTION__);
+  D("called\n");
   return PAM_SUCCESS;
   /* modopt_t *options = NULL; */
   /* const char *user, *rhost; */
@@ -196,7 +198,7 @@ pam_sm_open_session(pam_handle_t *pamh, int flags, int argc, const char **argv)
 {
   const char *user;
   int rc;
-  D("EGA %-10s: Called %s\n", __FILE__, __FUNCTION__);
+  D("called\n");
   rc = pam_get_user(pamh, &user, NULL);
   if ( rc != PAM_SUCCESS) { SYSLOG("EGA: Unknown user: %s\n", pam_strerror(pamh, rc)); return rc; }
   DBGLOG("Opening Session for user: %s", user);
@@ -234,7 +236,7 @@ pam_sm_close_session(pam_handle_t *pamh, int flags, int argc, const char *argv[]
 {
   const char *user;
   int rc;
-  D("EGA %-10s: Called %s\n", __FILE__, __FUNCTION__);
+  D("called\n");
   rc = pam_get_user(pamh, &user, NULL);
   if ( rc != PAM_SUCCESS) { SYSLOG("EGA: Unknown user: %s\n", pam_strerror(pamh, rc)); return rc; }
   DBGLOG("Closing Session for user: %s", user);

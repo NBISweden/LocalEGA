@@ -9,6 +9,7 @@
 #include "config.h"
 #include "backend.h"
 #include "cega.h"
+#include "homedir.h"
 
 /* define passwd column names */
 #define COL_NAME   0
@@ -123,23 +124,31 @@ get_from_db(const char* username, struct passwd *result, char **buffer, size_t *
   result->pw_uid = (uid_t) strtoul(PQgetvalue(res, 0, COL_UID), (char**)NULL, 10);
   result->pw_gid = (gid_t) strtoul(PQgetvalue(res, 0, COL_GID), (char**)NULL, 10);
 
-  status = NSS_STATUS_SUCCESS;
+  /* refresh the user last accessed date */
+  res = PQexecParams(conn, "SELECT refresh_user($1)", 1, NULL, params, NULL, NULL, 0);
+  if(PQresultStatus(res) != PGRES_TUPLES_OK) DBGLOG("Warning: refresh_user() failed");
 
+  create_homedir(result);
+
+  status = NSS_STATUS_SUCCESS;
+  
 BAIL_OUT:
   PQclear(res);
   return status;
 }
 
 bool
-add_to_db(const char* username, const char* pwdh, const char* pubkey)
+add_to_db(const char* username, const char* pwdh, const char* pubkey, const char* expiration)
 {
-  const char* params[3] = { username, pwdh, pubkey};
+  /* Expiration is ignored, for the moment */
+  const char* params[4] = { username, pwdh, pubkey, NULL };
+  int nbparams = 3;
   PGresult *res;
   bool success;
 
   D("Prepared Statement: %s\n", options->nss_add_user);
   D("with VALUES('%s','%s','%s')\n", username, pwdh, pubkey);
-  res = PQexecParams(conn, options->nss_add_user, 3, NULL, params, NULL, NULL, 0);
+  res = PQexecParams(conn, options->nss_add_user, nbparams, NULL, params, NULL, NULL, 0);
 
   success = (PQresultStatus(res) == PGRES_TUPLES_OK);
   if(!success) D("%s\n", PQerrorMessage(conn));

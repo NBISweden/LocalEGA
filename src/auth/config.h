@@ -32,6 +32,10 @@ struct options_s {
   const char* rest_endpoint;  /* https://ega/user/<some-id> | returns a triplet in JSON format */
   int rest_buffer_size;       /* 1024 */
   const char* ssl_cert;       /* path the SSL certificate to contact Central EGA */
+
+  /* For the Homedir creation */
+  bool with_homedir;          /* enable the homedir creation */
+  const char* skel;           /* path to skeleton dir */
 };
 
 typedef struct options_s options_t;
