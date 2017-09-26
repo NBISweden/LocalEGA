@@ -21,9 +21,9 @@ cleanconfig(void)
   if(!options->nss_add_user      ) { free((char*)options->nss_add_user);   }
   if(!options->pam_auth          ) { free((char*)options->pam_auth);       }
   if(!options->pam_acct          ) { free((char*)options->pam_acct);       }
+  if(!options->pam_prompt        ) { free((char*)options->pam_prompt);     }
   if(!options->rest_endpoint     ) { free((char*)options->rest_endpoint);  }
   if(!options->ssl_cert          ) { free((char*)options->ssl_cert);       }
-  if(!options->pam_prompt        ) { free((char*)options->pam_prompt);     }
   if(!options->skel              ) { free((char*)options->skel);           }
   free(options);
   return;
@@ -58,6 +58,7 @@ readconfig(const char* configfile)
   options->cfgfile = configfile;
   options->with_rest = ENABLE_REST;
   options->rest_buffer_size = BUFFER_REST;
+  options->pam_prompt = PAM_PROMPT;
   options->ssl_cert = CEGA_CERT;
   options->with_homedir = false;
   options->skel = "/ega/skel";

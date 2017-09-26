@@ -88,8 +88,8 @@ def main(args=None):
     server.on_cleanup.append(cleanup)
 
     # LOG.info('Preparing SSL context')
-    # ssl_ctx = ssl.create_default_context(cafile='cega.cert')
-    # ssl_ctx.load_cert_chain('cega.cert', 'cega.key')
+    # ssl_ctx = ssl.create_default_context(cafile='certs/ca.cert.pem')
+    # ssl_ctx.load_cert_chain('certs/cega.cert.pem', 'private/cega.key.pem', password="hello")
     ssl_ctx = None
 
     # And ...... cue music!

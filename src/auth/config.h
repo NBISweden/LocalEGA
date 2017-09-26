@@ -44,5 +44,5 @@ extern options_t* options;
 
 bool readconfig(const char* configfile);
 void cleanconfig(void);
-
+    
 #endif /* !__LEGA_CONFIG_H_INCLUDED__ */

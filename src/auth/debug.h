@@ -15,7 +15,7 @@
                       } while(0);
 #define AUTHLOG(x...) do {                                          \
                           openlog("EGA_auth", LOG_PID, LOG_USER);   \
-                          syslog(LOG_AUTHPRIV, ##x);                \
+                          syslog(LOG_AUTH, ##x);                    \
                           closelog();                               \
                       } while(0);
 

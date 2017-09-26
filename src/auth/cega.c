@@ -70,10 +70,13 @@ fetch_from_cega(const char *username, char **buffer, size_t *buflen, int *errnop
 
   cres = (struct curl_res_s*)malloc(sizeof(struct curl_res_s));
 
-  curl_easy_setopt(curl, CURLOPT_NOPROGRESS   , 1L               ); /* shut off the progress meter */
-  curl_easy_setopt(curl, CURLOPT_URL          , endpoint         );
-  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_callback    );
-  curl_easy_setopt(curl, CURLOPT_WRITEDATA    , (void *)cres     );
+ 
+  curl_easy_setopt(curl, CURLOPT_NOPROGRESS    , 1L               ); /* shut off the progress meter */
+  curl_easy_setopt(curl, CURLOPT_URL           , endpoint         );
+  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION , curl_callback    );
+  curl_easy_setopt(curl, CURLOPT_WRITEDATA     , (void *)cres     );
+  curl_easy_setopt(curl, CURLOPT_FAILONERROR   , 1L               ); /* when not 200 */
+
   /* curl_easy_setopt(curl, CURLOPT_SSLCERT      , options->ssl_cert); */
   /* curl_easy_setopt(curl, CURLOPT_SSLCERTTYPE  , "PEM"            ); */
 
@@ -93,7 +96,7 @@ fetch_from_cega(const char *username, char **buffer, size_t *buflen, int *errnop
   json = json_tokener_parse_verbose(cres->body, &jerr);
 
   if (jerr != json_tokener_success) {
-    D("ERROR: Failed to parse json string");
+    D("Failed to parse json string\n");
     goto BAIL_OUT;
   }
 

@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <libpq-fe.h>
-
+#include <crypt.h>
 
 #include "debug.h"
 #include "config.h"
@@ -28,7 +28,7 @@ backend_open(int stayopen)
 {
   D("called with args: stayopen: %d\n", stayopen);
   if(!readconfig(CFGFILE)){
-    D("%s", "Can't read config");
+    D("Can't read config\n");
     return false;
   }
   if(!conn){
@@ -51,7 +51,7 @@ backend_open(int stayopen)
 void
 backend_close(void)
 { 
-  D("%s", "called");
+  D("called\n");
   if (conn) PQfinish(conn);
   conn = NULL;
 }
@@ -74,6 +74,7 @@ _res2pwd(PGresult *res, int row, int col,
 
   if(*buflen < slen+1) {
     *errnop = ERANGE;
+    D("**************** try again\n");
     return NSS_STATUS_TRYAGAIN;
   }
   strncpy(*buf, s, slen);
@@ -97,13 +98,11 @@ get_from_db(const char* username, struct passwd *result, char **buffer, size_t *
   const char* params[1] = { username };
   PGresult *res;
 
-  D("Prepared Statement: %s\n", options->nss_get_user);
-  D("with '%s'\n", username);
+  D("Prepared Statement: %s with %s\n", options->nss_get_user, username);
   res = PQexecParams(conn, options->nss_get_user, 1, NULL, params, NULL, NULL, 0);
 
-  if(PQresultStatus(res) != PGRES_TUPLES_OK) goto BAIL_OUT;
-
-  if(!PQntuples(res)) goto BAIL_OUT; /* Answer is not a tuple: User not found */
+  /* Check answer */
+  if(PQresultStatus(res) != PGRES_TUPLES_OK || !PQntuples(res)) goto BAIL_OUT;
 
   /* no error, let's convert the result to a struct pwd */
   status = _res2pwd(res, 0, COL_NAME, &(result->pw_name), buffer, buflen, errnop);
@@ -124,16 +123,58 @@ get_from_db(const char* username, struct passwd *result, char **buffer, size_t *
   result->pw_uid = (uid_t) strtoul(PQgetvalue(res, 0, COL_UID), (char**)NULL, 10);
   result->pw_gid = (gid_t) strtoul(PQgetvalue(res, 0, COL_GID), (char**)NULL, 10);
 
-  /* refresh the user last accessed date */
-  res = PQexecParams(conn, "SELECT refresh_user($1)", 1, NULL, params, NULL, NULL, 0);
-  if(PQresultStatus(res) != PGRES_TUPLES_OK) DBGLOG("Warning: refresh_user() failed");
-
   status = NSS_STATUS_SUCCESS;
   
 BAIL_OUT:
   PQclear(res);
   return status;
 }
+
+/*
+ * refresh the user last accessed date
+ */
+int
+session_refresh_user(const char* username)
+{
+  int status = PAM_SESSION_ERR;
+  const char* params[1] = { username };
+  PGresult *res;
+
+  if(!backend_open(0)) return PAM_SESSION_ERR;
+
+  D("Refreshing user %s\n", username);
+  res = PQexecParams(conn, "SELECT refresh_user($1)", 1, NULL, params, NULL, NULL, 0);
+
+  status = (PQresultStatus(res) != PGRES_TUPLES_OK)?PAM_SUCCESS:PAM_SESSION_ERR;
+
+  PQclear(res);
+  backend_close();
+  return status;
+}
+
+/*
+ * Has the account expired
+ */
+int
+account_valid(const char* username)
+{
+  int status = PAM_PERM_DENIED;
+  const char* params[1] = { username };
+  PGresult *res;
+
+  if(!backend_open(0)) return PAM_PERM_DENIED;
+
+  D("Prepared Statement: %s with %s\n", options->pam_acct, username);
+  res = PQexecParams(conn, options->pam_acct, 1, NULL, params, NULL, NULL, 0);
+
+  /* Check answer */
+  status = (PQresultStatus(res) == PGRES_TUPLES_OK)?PAM_SUCCESS:PAM_ACCT_EXPIRED;
+
+  PQclear(res);
+  backend_close();
+  return status;
+}
+
 
 bool
 add_to_db(const char* username, const char* pwdh, const char* pubkey, const char* expiration)
@@ -193,7 +234,30 @@ backend_get_userentry(const char *username,
 }
 
 bool
-backend_authenticate(const char *user, const char *password)
+backend_authenticate(const char *username, const char *password)
 {
-  return false;
+  int status = false;
+  const char* params[1] = { username };
+  const char* pwdh = NULL;
+  PGresult *res;
+
+  if(!backend_open(0)) return false;
+
+  D("Prepared Statement: %s with %s\n", options->pam_auth, username);
+  res = PQexecParams(conn, options->pam_auth, 1, NULL, params, NULL, NULL, 0);
+
+  /* Check answer */
+  if(PQresultStatus(res) != PGRES_TUPLES_OK || !PQntuples(res)) goto BAIL_OUT;
+  
+  /* no error, so fetch the result */
+  pwdh = strdup(PQgetvalue(res, 0, 0)); /* row 0, col 0 */
+
+  if (!strcmp(pwdh, crypt(password, pwdh)))
+    status = true;
+
+BAIL_OUT:
+  PQclear(res);
+  if(pwdh) free((void*)pwdh);
+  backend_close();
+  return status;
 }
