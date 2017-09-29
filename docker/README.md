@@ -1,6 +1,20 @@
 # Deploy LocalEGA using Docker
 
-## The environment variables
+## Simplay way
+
+From within `docker` directory (where <password> is your Central EGA password):
+
+```
+docker build -t lega-setup . && \
+docker run -d -it --rm -v $(PWD):/configuration -e password=<password> --name lega-setup lega-setup:latest && \
+docker-compose up -d
+```
+
+That's it :) Check if everything is fine using `docker-compose ps`.
+
+## Hard way
+
+### The environment variables
 
 It is necessary to create a `.env` file with the following variables:
 (mostly used to parameterize docker-compose)
@@ -39,7 +53,7 @@ For the keyserver, we create `.env.d/gpg` containing:
 ```
 GPG_PASSPHRASE=the-correct-passphrase
 ```
-## The CONF file
+### The CONF file
 
 The file pointed by `CONF` should contain the values that reset those
 from [defaults.ini](../src/lega/conf/defaults.ini). For example:
@@ -69,7 +83,7 @@ password = <same-as-POSTGRES_PASSWORD-above>
 All the other values will remain unchanged.<br/>
 Use `docker-compose exec <some-container> ega-conf --list` in any container (but inbox).
 
-## The KEYS file
+### The KEYS file
 
 The file pointed by `KEYS` should contain the information about the
 keys and will be located _only_ on the keyserver. For example:
@@ -92,7 +106,7 @@ passphrase = <something-complex-too>
 Docker will map the path from `RSA_PUB` in the `.env` file to
 `/etc/ega/rsa/pub.pem` in the keyserver container, for example.
 
-## A Central EGA user
+### A Central EGA user
 
 We fake the CentralEGA message broker and user database, with 2
 containers: `cega_mq` and `cega_users`.
@@ -111,7 +125,7 @@ The file name `john.yml` is used for the user `john`. You must at
 least specify a `password_hash` or a `pubkey`. Other values can be
 empty or missing.
 
-# Running
+### Running
 
 	docker-compose up -d
 	
@@ -124,10 +138,10 @@ Note that, in this architecture, we use 3 separate volumes: one for
 the inbox area, one for the staging area, and one for the vault. They
 will be created on-the-fly by docker-compose.
 
-## Stopping
+### Stopping
 
 	docker-compose down -v
 
-## Status
+### Status
 
 	docker-compose ps
