@@ -1,6 +1,6 @@
 # Deploy LocalEGA using Docker
 
-## Simplay way
+## Simple way
 
 From within `docker` directory (where <password> is your Central EGA password):
 
