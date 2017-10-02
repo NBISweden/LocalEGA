@@ -103,4 +103,4 @@ CEGA_USERS=./cega_users" >> .env
 
 RUN mkdir ../configuration
 
-CMD echo "password = ${password}" >> conf.ini && cp -r . ../configuration 
+CMD echo "password = ${password}" >> conf.ini && cp -r . ../configuration

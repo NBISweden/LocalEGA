@@ -5,8 +5,8 @@
 From within `docker` directory (where <password> is your Central EGA password):
 
 ```
-docker build -t lega-setup . && \
-docker run -d -it --rm -v $(PWD):/configuration -e password=<password> --name lega-setup lega-setup:latest && \
+docker build -t lega-bootstrap . && \
+docker run -d -it --rm -v $(PWD):/configuration -e password=<password> --name lega-bootstrap lega-bootstrap:latest && \
 docker-compose up -d
 ```
 
