@@ -2,11 +2,11 @@
 
 ## Simple way
 
-From within `docker` directory (where <password> is your Central EGA password):
+From within `docker` directory:
 
 ```
 docker build -t lega-bootstrap . && \
-docker run -d -it --rm -v $(PWD):/configuration -e password=<password> --name lega-bootstrap lega-bootstrap:latest && \
+docker run -d -it --rm -v $(PWD):/configuration --name lega-bootstrap lega-bootstrap:latest && \
 docker-compose up -d
 ```
 

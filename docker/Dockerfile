@@ -83,7 +83,8 @@ username = user \n\
 password = password \n\
 [cega.broker] \n\
 host = cega_mq \n\
-username = test " >> conf.ini
+username = test \n\
+password = password" >> conf.ini
 
 # Populate env-settings
 WORKDIR .env.d
@@ -103,4 +104,4 @@ CEGA_USERS=./cega_users" >> .env
 
 RUN mkdir ../configuration
 
-CMD echo "password = ${password}" >> conf.ini && cp -r . ../configuration
+CMD cp -r . ../configuration
