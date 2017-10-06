@@ -46,10 +46,10 @@ different PATHs in the `.env` and `.env.d` settings.
   program `rng-tools` to solve this problem. E.g. on Debian/Ubuntu system,
   install the software by 
 
-    sudo apt-get install rng-tools
+	   sudo apt-get install rng-tools
 
   and then run
 
-    sudo rngd -r /dev/urandom
+ 	  sudo rngd -r /dev/urandom
 
 
