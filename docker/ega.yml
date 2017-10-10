@@ -68,6 +68,7 @@ services:
       - mq
       - cega_mq
       - inbox
+    env_file: .env.d/db
     hostname: ega_vault
     container_name: ega_vault
     image: nbis/ega:common
@@ -89,6 +90,7 @@ services:
       - cega_mq
       - keys
       - inbox
+    env_file: .env.d/db
     image: nbis/ega:worker
     environment:
       - GPG_TTY=/dev/console
