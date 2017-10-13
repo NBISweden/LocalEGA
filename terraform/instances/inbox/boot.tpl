@@ -97,7 +97,7 @@ SyslogFacility AUTHPRIV
 UsePAM yes
 PubkeyAuthentication yes
 AuthorizedKeysFile .ssh/authorized_keys
-PasswordAuthentication no
+PasswordAuthentication yes
 ChallengeResponseAuthentication yes
 KerberosAuthentication no
 GSSAPIAuthentication no
@@ -125,7 +125,6 @@ MATCH GROUP ega USER *,!ega
   ChrootDirectory %h
   AuthorizedKeysCommand /usr/local/bin/ega-ssh-keys.sh
   AuthorizedKeysCommandUser ega
-  PasswordAuthentication yes
   AuthenticationMethods "publickey" "keyboard-interactive:pam" "password"
   # -d (remote start directory relative user root)
   ForceCommand internal-sftp -d /inbox
