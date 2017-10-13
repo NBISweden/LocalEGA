@@ -36,7 +36,7 @@ export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 
 # Setup
 gpg --list-keys && \
-gpg --keyserver pgp.mit.edu --recv-keys 0x4F25E3B6 0xE0856959 0x33BD3F06 0x7EFD60D9 0xF7E48EDB
+gpg --keyserver keyserver.ubuntu.com --recv-keys 0x4F25E3B6 0xE0856959 0x33BD3F06 0x7EFD60D9 0xF7E48EDB
 
 # Downloads
 curl -O ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-${LIBGPG_ERROR_VERSION}.tar.gz
@@ -97,7 +97,7 @@ pushd gnupg-${GNUPG_VERSION} && ./configure && make && make install && popd
 ##############################################################
 cd /var/src/openssh
 
-gpg --keyserver pgp.mit.edu --recv-keys 0x6D920D30
+gpg --keyserver keyserver.ubuntu.com --recv-keys 0x6D920D30
 # Damien Miller <djm@mindrot.org>
 
 curl -O ftp://ftp.eu.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-${OPENSSH_VERSION}.tar.gz
