@@ -38,7 +38,7 @@ services:
        - ${CODE}:/root/ega
        - ${ENTRYPOINTS}/frontend.sh:/usr/local/bin/frontend.sh:ro
        - ${ENTRYPOINTS}/wait-for-postgres.sh:/usr/local/bin/wait-for-postgres.sh:ro
-    command: wait-for-postgres.sh frontend.sh
+    command: ["wait-for-postgres.sh", "frontend.sh"]
 
   # SFTP inbox
   inbox:
@@ -58,7 +58,7 @@ services:
        - inbox:/ega/inbox
        - ${ENTRYPOINTS}/inbox.sh:/usr/local/bin/inbox.sh:ro
        - ${ENTRYPOINTS}/wait-for-postgres.sh:/usr/local/bin/wait-for-postgres.sh:ro
-    command: wait-for-postgres.sh inbox.sh
+    command: ["wait-for-postgres.sh", "inbox.sh"]
 
   # Vault
   vault:
@@ -79,7 +79,7 @@ services:
        - vault:/ega/vault
        - ${ENTRYPOINTS}/vault.sh:/usr/local/bin/vault.sh:ro
        - ${ENTRYPOINTS}/wait-for-postgres.sh:/usr/local/bin/wait-for-postgres.sh:ro
-    command: wait-for-postgres.sh vault.sh
+    command: ["wait-for-postgres.sh", "vault.sh"]
 
   # Ingestion Workers
   ingest:
@@ -104,7 +104,7 @@ services:
        - ${GPG_HOME}/trustdb.gpg:/root/.gnupg/trustdb.gpg
        - ${ENTRYPOINTS}/ingest.sh:/usr/local/bin/ingest.sh:ro
        - ${ENTRYPOINTS}/wait-for-postgres.sh:/usr/local/bin/wait-for-postgres.sh:ro
-    command: wait-for-postgres.sh ingest.sh
+    command: ["wait-for-postgres.sh", "ingest.sh"]
 
   # Key server
   keys:
