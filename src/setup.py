@@ -1,5 +1,5 @@
-from setuptools import setup
-from lega import __version__ as lega_version
+from setuptools import setup, find_packages
+from lega import __version__
 from markdown import markdown
 from pathlib import Path
 
@@ -8,15 +8,16 @@ def readme():
         return markdown(f.read())
 
 setup(name='lega',
-      version=lega_version,
+      version=__version__,
       url='http://lega.nbis.se',
       license='Apache License 2.0',
       author='NBIS System Developers',
       author_email='ega@nbis.se',
       description='Local EGA',
       long_description=readme(),
-      packages=['lega'],
-      include_package_data=True,
+      packages=['lega', 'lega/utils', 'lega/conf'],
+      include_package_data=False,
+      package_data={ 'lega': ['conf/loggers/*.yaml', 'conf/defaults.ini', 'conf/templates/*.html'] },
       zip_safe=True,
       entry_points={
           'console_scripts': [
@@ -24,7 +25,7 @@ setup(name='lega',
               'ega-ingest = lega.ingest:main',
               'ega-vault = lega.vault:main',
               'ega-verify = lega.verify:main',
-              'ega-monitor = lega.monitor:main',
+              # 'ega-monitor = lega.monitor:main',
               'ega-keyserver = lega.keyserver:main',
               'ega-conf = lega.conf.__main__:main',
               'ega-socket-proxy = lega.utils.socket:proxy',
@@ -33,7 +34,7 @@ setup(name='lega',
       },
       platforms = 'any',
       install_requires=[
-          'pika==0.10.0',
+          'pika==0.11.0',
           'aiohttp==2.2.5',
           'pycryptodomex==3.4.5',
           'aiopg==0.13.0',
