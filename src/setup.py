@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 from lega import __version__
 from markdown import markdown
 from pathlib import Path
@@ -25,7 +25,7 @@ setup(name='lega',
               'ega-ingest = lega.ingest:main',
               'ega-vault = lega.vault:main',
               'ega-verify = lega.verify:main',
-              # 'ega-monitor = lega.monitor:main',
+              'ega-monitor = lega.monitor:main',
               'ega-keyserver = lega.keyserver:main',
               'ega-conf = lega.conf.__main__:main',
               'ega-socket-proxy = lega.utils.socket:proxy',
