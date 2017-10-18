@@ -18,7 +18,7 @@ setup(name='lega',
       packages=['lega', 'lega/utils', 'lega/conf'],
       include_package_data=False,
       package_data={ 'lega': ['conf/loggers/*.yaml', 'conf/defaults.ini', 'conf/templates/*.html'] },
-      zip_safe=True,
+      zip_safe=False,
       entry_points={
           'console_scripts': [
               'ega-frontend = lega.frontend:main',
