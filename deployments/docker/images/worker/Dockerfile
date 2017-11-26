@@ -3,7 +3,9 @@ LABEL maintainer "Frédéric Haziza, NBIS"
 
 RUN yum -y install vim-common zlib-devel bzip2-devel
 
-RUN mkdir -p /var/src/ega
+RUN mkdir -p /var/src/ega && \
+    mkdir -p /run/ega && \
+    chmod 700 /run/ega
 
 COPY rpmbuild/RPMS/x86_64/*.rpm /var/src/ega/
 RUN rpm -i /var/src/ega/*.rpm && \
