@@ -2,7 +2,9 @@ FROM nbisweden/ega-worker:latest
 LABEL maintainer "Frédéric Haziza, NBIS"
 
 RUN mkdir -p /root/.gnupg && \
-    chmod 700 /root/.gnupg
+    chmod 700 /root/.gnupg && \
+    mkdir -p /run/ega && \
+    chmod 700 /run/ega
 
 COPY gpg-agent.conf /root/.gnupg/gpg-agent.conf
 

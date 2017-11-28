@@ -10,7 +10,7 @@ set -e
 # echo "Waiting for Keyserver"
 until nc -4 --send-only ${KEYSERVER_HOST} ${KEYSERVER_PORT} </dev/null &>/dev/null; do sleep 1; done
 echo "Starting the socket forwarder"
-ega-socket-forwarder /root/.gnupg/S.gpg-agent ${KEYSERVER_HOST}:${KEYSERVER_PORT} --certfile /etc/ega/ssl.cert &
+ega-socket-forwarder /run/ega/S.gpg-agent ${KEYSERVER_HOST}:${KEYSERVER_PORT} --certfile /etc/ega/ssl.cert &
 
 echo "Waiting for Central Message Broker"
 until nc -4 --send-only cega_mq 5672 </dev/null &>/dev/null; do sleep 1; done

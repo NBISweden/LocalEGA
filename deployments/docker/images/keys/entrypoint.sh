@@ -9,8 +9,9 @@ GPG=/usr/local/bin/gpg2
 GPG_AGENT=/usr/local/bin/gpg-agent
 GPG_PRESET=/usr/local/libexec/gpg-preset-passphrase
 
-pkill gpg-agent || true
-rm -rf $(gpgconf --list-dirs agent-extra-socket) || true
+gpgconf --kill gpg-agent || true
+# pkill gpg-agent || true
+# rm -rf $(gpgconf --list-dirs agent-extra-socket) || true
 
 # Start the GPG Agent in /root/.gnupg
 ${GPG_AGENT} --daemon
@@ -22,7 +23,7 @@ ${GPG_PRESET} --preset -P $GPG_PASSPHRASE $KEYGRIP
 unset GPG_PASSPHRASE
 
 echo "Starting the gpg-agent proxy"
-ega-socket-proxy "0.0.0.0:$KEYSERVER_PORT" /root/.gnupg/S.gpg-agent --certfile /etc/ega/ssl.cert --keyfile /etc/ega/ssl.key &
+ega-socket-proxy "0.0.0.0:$KEYSERVER_PORT" /run/ega/S.gpg-agent --certfile /etc/ega/ssl.cert --keyfile /etc/ega/ssl.key &
 
 echo "Starting the key management server"
 exec ega-keyserver --keys /etc/ega/keys.ini
