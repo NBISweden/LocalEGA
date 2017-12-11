@@ -120,7 +120,6 @@ services:
        - ${DATA}/swe1/certs/ssl.cert:/etc/ega/ssl.cert:ro
        - ${DATA}/swe1/gpg/pubring.kbx:/root/.gnupg/pubring.kbx:ro
        - ${DATA}/swe1/gpg/trustdb.gpg:/root/.gnupg/trustdb.gpg
-    entrypoint: ["/bin/sleep","1000000000000"]
 
   # Key server
   keys_swe1:
