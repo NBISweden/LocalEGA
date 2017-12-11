@@ -19,7 +19,6 @@ import traceback
 from socket import gethostname
 from time import sleep
 import asyncio
-import uuid
 
 from ..conf import CONF
 from .exceptions import FromUser
