@@ -96,7 +96,6 @@ password = ${CEGA_MQ_PASSWORD}
 vhost = ${INSTANCE}
 heartbeat = 0
 
-file_queue = ${INSTANCE}.v1.commands.file
 file_routing = ${INSTANCE}.completed
 error_routing = ${INSTANCE}.errors
 
@@ -318,6 +317,35 @@ server.host: "0.0.0.0"
 elasticsearch.url: "http://ega-elasticsearch-${INSTANCE}:9200"
 EOF
 
+
+cat > ${PRIVATE}/${INSTANCE}/defs.json <<EOF
+{"rabbit_version": "3.6.12",
+ "users": [{"name": "guest","password_hash": "4tHURqDiZzypw0NTvoHhpn8/MMgONWonWxgRZ4NXgR8nZRBz","hashing_algorithm": "rabbit_password_hashing_sha256","tags": "administrator"}],
+ "vhosts":[{"name": "/"}],
+ "permissions": [{"user": "guest","vhost": "/","configure": ".*","write": ".*","read": ".*"}],
+ "parameters": [{
+     "value": {
+         "uri": "amqp://cega_${INSTANCE}:${CEGA_MQ_PASSWORD}@cega_mq:5672/${INSTANCE}",
+         "ack-mode": "on-confirm",
+         "trust-user-id": false,
+         "queue": "${INSTANCE}.v1.commands.file"
+     },
+     "vhost": "/",
+     "component": "federation-upstream",
+     "name": "CEGA"
+ }],
+ "global_parameters":[{"name": "cluster_name","value": "rabbit@localhost"}],
+ "policies": [{"vhost": "/", "name": "CEGA", "pattern": "cega", "apply-to": "queues", "definition": {"federation-upstream": "CEGA"}, "priority": 0 }],
+ "queues": [{"name": "archived",  "vhost": "/", "durable": true, "auto_delete": false, "arguments": {}},
+            {"name": "completed", "vhost": "/", "durable": true, "auto_delete": false, "arguments": {}},
+            {"name": "verified",  "vhost": "/", "durable": true, "auto_delete": false, "arguments": {}},
+            {"name": "cega",      "vhost": "/", "durable": true, "auto_delete": false, "arguments": {}}],
+ "exchanges":[{ "name": "lega", "vhost": "/", "type": "topic", "durable": true, "auto_delete": false, "internal": false, "arguments": {}}],
+ "bindings": [{ "source": "lega", "vhost": "/", "destination": "archived",  "destination_type": "queue", "routing_key": "lega.archived", "arguments": {}},
+              { "source": "lega", "vhost": "/", "destination": "completed", "destination_type": "queue", "routing_key": "lega.complete", "arguments": {}},
+              { "source": "lega", "vhost": "/", "destination": "verified",  "destination_type": "queue", "routing_key": "lega.verified", "arguments": {}}]
+}
+EOF
 #########################################################################
 # Keeping a trace of if
 #########################################################################

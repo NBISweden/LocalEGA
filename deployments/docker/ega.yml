@@ -10,7 +10,9 @@ services:
     image: rabbitmq:management
     container_name: ega_mq_swe1
     volumes:
-      - ./images/mq:/etc/rabbitmq
+      - ./images/mq/enabled_plugins:/etc/rabbitmq/enabled_plugins
+      - ./images/mq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config
+      - ${DATA}/swe1/defs.json:/etc/rabbitmq/defs.json
 
   # Postgres Database for Sweden
   db_swe1:
@@ -19,7 +21,7 @@ services:
     container_name: ega_db_swe1
     image: postgres:latest
     volumes:
-       - ${DATA}/swe1/db.sql:/docker-entrypoint-initdb.d/ega.sql:ro
+      - ${DATA}/swe1/db.sql:/docker-entrypoint-initdb.d/ega.sql:ro
       
 
   # Postgres Database for Finland
@@ -29,7 +31,7 @@ services:
     container_name: ega_db_fin1
     image: postgres:latest
     volumes:
-       - ${DATA}/fin1/db.sql:/docker-entrypoint-initdb.d/ega.sql:ro
+      - ${DATA}/fin1/db.sql:/docker-entrypoint-initdb.d/ega.sql:ro
 
   # ReST frontend
   frontend_swe1:
@@ -118,6 +120,7 @@ services:
        - ${DATA}/swe1/certs/ssl.cert:/etc/ega/ssl.cert:ro
        - ${DATA}/swe1/gpg/pubring.kbx:/root/.gnupg/pubring.kbx:ro
        - ${DATA}/swe1/gpg/trustdb.gpg:/root/.gnupg/trustdb.gpg
+    entrypoint: ["/bin/sleep","1000000000000"]
 
   # Key server
   keys_swe1:

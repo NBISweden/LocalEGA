@@ -197,7 +197,7 @@ def main(args=None):
         loop.close()
         sys.exit(1)
     else:
-        from_broker = (get_connection('cega.broker'), CONF.get('cega.broker','file_queue'))
+        from_broker = (get_connection('local.broker'), 'cega') # upstream link configured in local broker
         to_broker = (get_connection('local.broker'), 'lega', 'lega.complete')
         consume(from_broker, do_work, to_broker)
     finally:
