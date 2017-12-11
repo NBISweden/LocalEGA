@@ -19,9 +19,11 @@ import traceback
 from socket import gethostname
 from time import sleep
 import asyncio
+import uuid
 
 from ..conf import CONF
 from .exceptions import FromUser
+from .amqp import error_to_cega
 
 LOG = logging.getLogger('db')
 
@@ -186,11 +188,10 @@ def get_errors(from_user=False):
             cur.execute(query)
             return cur.fetchall()
 
-def set_error(file_id, error):
+def set_error(file_id, error, from_user=False):
     assert file_id, 'Eh? No file_id?'
     assert error, 'Eh? No error?'
     LOG.debug(f'Setting error for {file_id}: {error!s}')
-    from_user = isinstance(error,FromUser)
     hostname = gethostname()
     with connect() as conn:
         with conn.cursor() as cur:
@@ -271,7 +272,15 @@ def catch_error(func):
             try:
                 data = args[-1]
                 file_id = data['file_id'] # I should have it
-                set_error(file_id, e)
+                from_user = isinstance(e,FromUser)
+                set_error(file_id, e, from_user)
+                if from_user: # Send to CEGA
+                    data = args[-1] # data is the last argument
+                    error_to_cega({
+                        'filename': data.get('filename'),
+                        'user': data.get('user'),
+                        'error': str(e),
+                    })
             except Exception as e2:
                 LOG.error(f'Exception: {e!r}')
                 print(repr(e), file=sys.stderr)

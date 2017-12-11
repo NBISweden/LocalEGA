@@ -98,6 +98,7 @@ heartbeat = 0
 
 file_queue = ${INSTANCE}.v1.commands.file
 file_routing = ${INSTANCE}.completed
+error_routing = ${INSTANCE}.errors
 
 [db]
 host = ega_db_${INSTANCE}

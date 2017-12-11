@@ -1,7 +1,7 @@
 import logging
 import pika
-import uuid
 import json
+import uuid
 
 from ..conf import CONF
 
@@ -108,3 +108,14 @@ def consume(from_broker, work, to_broker):
         from_connection.close()
         if to_connection and from_connection is not to_connection: # not same physical object
             to_connection.close()
+
+def error_to_cega(message):
+    LOG.debug(f'Sending error to CEGA: {message}')
+    broker = get_connection('cega.broker')
+    exchange = CONF.get('cega.broker','exchange')
+    routing_key = CONF.get('cega.broker','error_routing')
+    channel = broker.channel()
+    channel.basic_publish(exchange    = exchange,
+                          routing_key = routing_key,
+                          properties  = pika.BasicProperties(correlation_id=str(uuid.uuid4()), content_type='application/json',delivery_mode=2),
+                          body        = json.dumps(message))

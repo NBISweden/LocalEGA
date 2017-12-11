@@ -7,8 +7,11 @@ services:
     hostname: ega_mq
     ports:
       - "15672:15672"
-    image: nbisweden/ega-mq
+    image: rabbitmq:management
     container_name: ega_mq_swe1
+    volumes:
+      - ./images/mq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config
+      - ./images/mq/rabbitmq.json:/etc/rabbitmq/defs.json
 
   # Postgres Database for Sweden
   db_swe1:
