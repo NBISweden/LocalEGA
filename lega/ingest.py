@@ -109,6 +109,8 @@ def work(active_master_key, master_pubkey, data):
     except KeyError:
         LOG.info('Finding a companion file')
         encrypted_hash, encrypted_algo = checksum.get_from_companion(inbox_filepath)
+        data['encrypted_integrity'] = {'hash': encrypted_hash,
+                                       'algorithm': encrypted_algo }
 
 
     assert( isinstance(encrypted_hash,str) )
@@ -139,6 +141,8 @@ def work(active_master_key, master_pubkey, data):
         # Strip the suffix first.
         LOG.info('Finding a companion file')
         unencrypted_hash, unencrypted_algo = checksum.get_from_companion(inbox_filepath.with_suffix(''))
+        data['unencrypted_integrity'] = {'hash': unencrypted_hash,
+                                         'algorithm': unencrypted_algo }
 
     LOG.debug(f'Starting the re-encryption\n\tfrom {inbox_filepath}\n\tto {staging_filepath}')
     db.set_progress(file_id, str(staging_filepath), encrypted_hash, encrypted_algo, unencrypted_hash, unencrypted_algo)

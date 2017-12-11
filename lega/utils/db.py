@@ -276,11 +276,8 @@ def catch_error(func):
                 set_error(file_id, e, from_user)
                 if from_user: # Send to CEGA
                     data = args[-1] # data is the last argument
-                    error_to_cega({
-                        'filename': data.get('filename'),
-                        'elixir_id': data.get('elixir_id'),
-                        'error': repr(e),
-                    })
+                    data['error'] = repr(e)
+                    error_to_cega(data)
             except Exception as e2:
                 LOG.error(f'Exception: {e!r}')
                 print(repr(e), file=sys.stderr)
