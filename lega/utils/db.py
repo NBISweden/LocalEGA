@@ -278,8 +278,8 @@ def catch_error(func):
                     data = args[-1] # data is the last argument
                     error_to_cega({
                         'filename': data.get('filename'),
-                        'user': data.get('user'),
-                        'error': str(e),
+                        'elixir_id': data.get('elixir_id'),
+                        'error': repr(e),
                     })
             except Exception as e2:
                 LOG.error(f'Exception: {e!r}')
