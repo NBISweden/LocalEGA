@@ -85,19 +85,8 @@ gpg_cmd = gpg2 --decrypt %(file)s
 keyserver_host = ega_keys_${INSTANCE}
 
 ## Connecting to Local EGA
-[local.broker]
+[broker]
 host = ega_mq_${INSTANCE}
-
-## Connecting to Central EGA
-[cega.broker]
-host = cega_mq
-username = cega_${INSTANCE}
-password = ${CEGA_MQ_PASSWORD}
-vhost = ${INSTANCE}
-heartbeat = 0
-
-file_routing = ${INSTANCE}.completed
-error_routing = ${INSTANCE}.errors
 
 [db]
 host = ega_db_${INSTANCE}
