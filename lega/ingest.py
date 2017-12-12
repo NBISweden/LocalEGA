@@ -37,7 +37,7 @@ from Cryptodome.PublicKey import RSA
 
 from .conf import CONF
 from .utils import db, exceptions, checksum, sanitize_user_id
-from .utils.amqp import get_connection, consume
+from .utils.amqp import consume
 from .utils.crypto import ingest as crypto_ingest
 from .keyserver import MASTER_PUBKEY, ACTIVE_MASTER_KEY
 
@@ -201,9 +201,8 @@ def main(args=None):
         loop.close()
         sys.exit(1)
     else:
-        from_broker = (get_connection('local.broker'), 'cega') # upstream link configured in local broker
-        to_broker = (get_connection('local.broker'), 'lega', 'lega.complete')
-        consume(from_broker, do_work, to_broker)
+        # upstream link configured in local broker
+        consume(do_work, 'files', 'lega.staged')
     finally:
         loop.close()
 

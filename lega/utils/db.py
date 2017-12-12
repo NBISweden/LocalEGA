@@ -22,7 +22,7 @@ import asyncio
 
 from ..conf import CONF
 from .exceptions import FromUser
-from .amqp import error_to_cega
+from .amqp import report_user_error
 
 LOG = logging.getLogger('db')
 
@@ -276,7 +276,7 @@ def catch_error(func):
                 if from_user: # Send to CEGA
                     data = args[-1] # data is the last argument
                     data['error'] = repr(e)
-                    error_to_cega(data)
+                    report_user_error(data)
             except Exception as e2:
                 LOG.error(f'Exception: {e!r}')
                 print(repr(e), file=sys.stderr)
