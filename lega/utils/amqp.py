@@ -67,7 +67,7 @@ def consume(work, from_queue, to_routing):
     '''
 
     assert( from_queue and to_routing )
-    connection = get_connection('local.broker')
+    connection = get_connection('broker')
 
     LOG.debug(f'Consuming message from {from_queue}')
 
