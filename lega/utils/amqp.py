@@ -107,7 +107,7 @@ def consume(work, from_queue, to_routing):
 
 def report_user_error(message):
     LOG.debug(f'Sending user error to LocalEGA error queue: {message}')
-    broker = get_connection('local.broker')
+    broker = get_connection('broker')
     channel = broker.channel()
     channel.basic_publish(exchange    = 'lega',
                           routing_key = 'lega.error.user',

@@ -3,9 +3,9 @@
 
 # Errors for the users
 class FromUser(Exception):
-    def __str__(self):
-        return repr(self)
     def __repr__(self):
+        return str(self)
+    def __str__(self):
         return 'Incorrect user input'
 
 class NotFoundInInbox(FromUser):
