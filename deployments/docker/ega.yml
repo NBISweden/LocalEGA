@@ -4,15 +4,12 @@ services:
 
   # Local Message broker
   mq_swe1:
+    env_file: private/swe1/mq.env
     hostname: ega_mq
     ports:
       - "15672:15672"
-    image: rabbitmq:management
+    image: nbisweden/ega-mq
     container_name: ega_mq_swe1
-    volumes:
-      - ./images/mq/enabled_plugins:/etc/rabbitmq/enabled_plugins:ro
-      - ./images/mq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
-      - ${DATA}/swe1/defs.json:/etc/rabbitmq/defs.json:ro
 
   # Postgres Database for Sweden
   db_swe1:

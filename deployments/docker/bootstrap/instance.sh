@@ -301,58 +301,12 @@ elasticsearch.url: "http://ega-elasticsearch-${INSTANCE}:9200"
 EOF
 
 
-# Password is 'guest'
-cat > ${PRIVATE}/${INSTANCE}/defs.json <<EOF
-{"rabbit_version":"3.6.12",
- "users":[{"name":"guest","password_hash":"4tHURqDiZzypw0NTvoHhpn8/MMgONWonWxgRZ4NXgR8nZRBz","hashing_algorithm":"rabbit_password_hashing_sha256","tags":"administrator"}],
- "vhosts":[{"name":"/"}],
- "permissions":[{"user":"guest","vhost":"/","configure":".*","write":".*","read":".*"}],
- "parameters":[{"value":{"src-uri":"amqp://",
-			 "src-exchange":"lega",
-			 "src-exchange-key":"lega.error.user",
-			 "dest-uri":"amqp://cega_${INSTANCE}:${CEGA_MQ_PASSWORD}@cega_mq:5672/${INSTANCE}",
-			 "dest-exchange":"localega.v1",
-			 "dest-exchange-key":"${INSTANCE}.errors",
-			 "add-forward-headers":false,
-			 "ack-mode":"on-confirm",
-			 "delete-after":"never"},
-		"vhost":"/",
-		"component":"shovel",
-		"name":"CEGA-errors"},
-	       {"value":{"src-uri":"amqp://",
-			 "src-exchange":"lega",
-			 "src-exchange-key":"lega.completed",
-			 "dest-uri":"amqp://cega_${INSTANCE}:${CEGA_MQ_PASSWORD}@cega_mq:5672/${INSTANCE}",
-			 "dest-exchange":"localega.v1",
-			 "dest-exchange-key":"${INSTANCE}.completed",
-			 "add-forward-headers":false,
-			 "ack-mode":"on-confirm",
-			 "delete-after":"never"},
-		"vhost":"/",
-		"component":"shovel",
-		"name":"CEGA-completion"},
-	       {"value":{"uri":"amqp://cega_${INSTANCE}:${CEGA_MQ_PASSWORD}@cega_mq:5672/${INSTANCE}",
-			 "ack-mode":"on-confirm",
-			 "trust-user-id":false,
-			 "queue":"${INSTANCE}.v1.commands.file"},
-		"vhost":"/",
-		"component":"federation-upstream",
-		"name":"CEGA"}],
- "global_parameters":[{"name":"cluster_name","value":"rabbit@localhost"}],
- "policies":[{"vhost":"/","name":"CEGA","pattern":"files","apply-to":"queues","definition":{"federation-upstream":"CEGA"},"priority":0}],
-"queues":[{"name":"archived",   "vhost":"/","durable":true,"auto_delete":false,"arguments":{}},
-	  {"name":"staged",     "vhost":"/","durable":true,"auto_delete":false,"arguments":{}},
-	  {"name":"files",      "vhost":"/","durable":true,"auto_delete":false,"arguments":{}},
-	  {"name":"cega.errors","vhost":"/","durable":true,"auto_delete":false,"arguments":{}},
-	  {"name":"verified",   "vhost":"/","durable":true,"auto_delete":false,"arguments":{}}],
- "exchanges":[{"name":"lega","vhost":"/","type":"topic","durable":true,"auto_delete":false,"internal":false,"arguments":{}}],
- "bindings":[{"source":"lega","vhost":"/","destination":"archived","destination_type":"queue","routing_key":"lega.archived","arguments":{}},
-	     {"source":"lega","vhost":"/","destination":"cega.errors","destination_type":"queue","routing_key":"lega.error.user","arguments":{}},
-	     {"source":"lega","vhost":"/","destination":"staged","destination_type":"queue","routing_key":"lega.staged","arguments":{}},
-	     {"source":"lega","vhost":"/","destination":"verified","destination_type":"queue","routing_key":"lega.verified","arguments":{}}]
-}
+# For the moment, still using guest:guest
+echomsg "\t* Local broker to Central EGA broker credentials"
+cat > ${PRIVATE}/${INSTANCE}/mq.env <<EOF
+INSTANCE=${INSTANCE}
+CEGA_MQ_PASSWORD=${CEGA_MQ_PASSWORD}
 EOF
-
 
 
 #########################################################################
