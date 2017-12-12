@@ -10,6 +10,9 @@ RUN rabbitmq-plugins enable --offline rabbitmq_federation && \
     rabbitmq-plugins enable --offline rabbitmq_shovel && \
     rabbitmq-plugins enable --offline rabbitmq_shovel_management
 
+ENV INSTANCE=
+ENV CEGA_MQ_PASSWORD=
+
 # See inside the entrypoint for the reason
 COPY entrypoint.sh /usr/bin/ega-entrypoint.sh
 RUN chmod +x /usr/bin/ega-entrypoint.sh
