@@ -179,12 +179,6 @@ loggers:
   utils:
     level: ${_LOG_LEVEL}
     handlers: [logstash,console]
-  sys-monitor:
-    level: ${_LOG_LEVEL}
-    handlers: [logstash,console]
-  user-monitor:
-    level: ${_LOG_LEVEL}
-    handlers: [logstash,console]
   amqp:
     level: ${_LOG_LEVEL}
     handlers: [logstash,console]

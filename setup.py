@@ -26,7 +26,6 @@ Users are handled throught Central EGA, directly.
               'ega-ingest = lega.ingest:main',
               'ega-vault = lega.vault:main',
               'ega-verify = lega.verify:main',
-              'ega-monitor = lega.monitor:main',
               'ega-keyserver = lega.keyserver:main',
               'ega-conf = lega.conf.__main__:main',
               'ega-socket-proxy = lega.utils.socket:proxy',

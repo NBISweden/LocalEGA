@@ -20,7 +20,6 @@ containers or as virtual machines.
 | db         | A Postgres database with appropriate schema |
 | mq         | A RabbitMQ message broker with appropriate accounts, exchanges, queues and bindings |
 | inbox      | SFTP server, acting as a dropbox, where user credentials are in the db component |
-| monitors   | Gathers the logs of all components |
 | keyserver  | Handles the encryption/decryption keys |
 | workers    | Connect to the keys component (via SSL) and do the actual re-encryption work |
 | vault      | Stores the files from the staging area to the vault. It includes a verification step afterwards. |
