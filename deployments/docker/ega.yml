@@ -10,9 +10,9 @@ services:
     image: rabbitmq:management
     container_name: ega_mq_swe1
     volumes:
-      - ./images/mq/enabled_plugins:/etc/rabbitmq/enabled_plugins
-      - ./images/mq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config
-      - ${DATA}/swe1/defs.json:/etc/rabbitmq/defs.json
+      - ./images/mq/enabled_plugins:/etc/rabbitmq/enabled_plugins:ro
+      - ./images/mq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
+      - ${DATA}/swe1/defs.json:/etc/rabbitmq/defs.json:ro
 
   # Postgres Database for Sweden
   db_swe1:
