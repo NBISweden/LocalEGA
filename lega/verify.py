@@ -42,7 +42,7 @@ def main(args=None):
         args = sys.argv[1:]
 
     CONF.setup(args) # re-conf
-    
+
     consume(work, 'archived', 'lega.completed')
 
 if __name__ == '__main__':
