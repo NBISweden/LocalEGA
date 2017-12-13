@@ -7,8 +7,9 @@ set -x
 [[ -z "${CEGA_MQ_PASSWORD}" ]] && echo 'Environment CEGA_MQ_PASSWORD is empty' 1>&2 && exit 1
 
 # Problem of loading the plugins and definitions out-of-orders.
-# Therefore: we run the server, empty
-# and then we upload the definitions through the HTTP API
+# Explanation: https://github.com/rabbitmq/rabbitmq-shovel/issues/13
+# Therefore: we run the server, with some default confs
+# and then we upload the cega-definitions through the HTTP API
 
 # We cannot add those definitions to defs.json (loaded by the
 # management plugin. See /etc/rabbitmq/rabbitmq.config)
@@ -56,14 +57,19 @@ chmod 640 /etc/rabbitmq/defs-cega.json
 
 # And...cue music
 chown -R rabbitmq /var/lib/rabbitmq
-"$@" & # ie CMD rabbitmq-server
-PID=$!
-trap "kill ${PID}; exit 1" INT
 
-# Wait until the server is ready (on the management port)
-#until nc -4 --send-only 127.0.0.1 15672 </dev/null &>/dev/null; do sleep 1; done
-until nc -z 127.0.0.1 15672; do sleep 1; done
-ROUND=30
-until curl -X POST -u guest:guest -H "Content-Type: application/json" --data @/etc/rabbitmq/defs-cega.json http://127.0.0.1:15672/api/definitions || ((ROUND<0)); do sleep 1; $((ROUND--)); done
+{ # Spawn off
+    sleep 5 # Small delay first
+    
+    # Wait until the server is ready (on the management port)
+    until nc -z 127.0.0.1 15672; do sleep 1; done
+    ROUND=30
+    until curl -X POST -u guest:guest -H "Content-Type: application/json" --data @/etc/rabbitmq/defs-cega.json http://127.0.0.1:15672/api/definitions || ((ROUND<0))
+    do
+	sleep 1
+	$((ROUND--))
+    done
+    echo "Central EGA connections loaded"
+} &
 
-wait ${PID}
+exec "$@" # ie CMD rabbitmq-server
