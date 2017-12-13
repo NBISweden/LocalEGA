@@ -1,7 +1,6 @@
 language: generic
-sudo: required
 dist: trusty
-group: deprecated-2017Q4
+sudo: required
 
 services:
   - docker
@@ -21,7 +20,7 @@ install:
 
 script:
   - cd ../../tests
-  - sudo mvn test -B
+  - mvn test -B
 
 after_success:
   - |
