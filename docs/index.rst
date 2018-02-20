@@ -21,7 +21,7 @@ become searchable by the Central EGA's engine.
 
 ----
 
-More concretly, Central EGA contains a database of users. The Central
+More concretely, Central EGA contains a database of users. The Central
 EGA' ID is used to authenticate the user against either their EGA
 password or an RSA key.
 

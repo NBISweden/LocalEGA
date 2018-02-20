@@ -2,25 +2,23 @@
 # -*- coding: utf-8 -*-
 
 '''
-####################################
-#
-# Re-Encryption Worker
-#
-####################################
+Re-Encryption Worker
+--------------------
 
 It simply consumes message from the message queue configured in the [worker] section of the configuration files.
 
-It defaults to the `tasks` queue.
+It defaults to the ``tasks`` queue.
 
 It is possible to start several workers, of course!
 However, they should have the gpg-agent socket location in their environment (when using GnuPG 2.0 or less).
-In GnuPG 2.1, it is not necessary (Just point the `homedir` to the right place).
+In GnuPG 2.1, it is not necessary (just point the ``homedir`` to the right place).
 
 When a message is consumed, it must be of the form:
-* filepath
-* target
-* hash (of the unencrypted content)
-* hash_algo: the associated hash algorithm
+
+* ``filepath``
+* ``target``
+* ``hash`` (of the unencrypted content)
+* ``hash_algo`` - the associated hash algorithm
 '''
 
 import sys
@@ -67,15 +65,16 @@ async def _req(req, host, port, ssl=None, loop=None):
 
 @db.catch_error
 def work(active_master_key, master_pubkey, data):
-    '''Main ingestion function
+    '''Main ingestion function.
 
     The data is of the form:
+
     * user id
     * a filepath
     * encrypted hash information (with both the hash value and the hash algorithm)
     * unencrypted hash information (with both the hash value and the hash algorithm)
 
-    The hash algorithm we support are MD5 and SHA256, for the moment.
+    .. note:: The hash algorithm we support are MD5 and SHA256, for the moment.
     '''
 
     filepath = data['filepath']

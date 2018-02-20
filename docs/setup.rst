@@ -81,7 +81,7 @@ Bootstrap
 =========
 
 In order to simplify the setup of LocalEGA's components, we have
-developped a few bootstrap scripts (one for the `Docker`_ deployment
+developed a few bootstrap scripts (one for the `Docker`_ deployment
 and one for the `OpenStack cloud`_ deployment).
 
 Those script create random passwords, configuration files, GnuPG keys,

@@ -3,6 +3,7 @@
 #
 import os
 import sys
+import datetime
 
 # Get the project root dir, which is the parent dir of this
 #sys.path.insert(0, os.path.dirname(os.getcwd()))
@@ -41,9 +42,12 @@ source_suffix = '.rst'
 # The master toctree document.
 master_doc = 'index'
 
+# Get current year
+current_year = str(datetime.date.today().year)
+
 # General information about the project.
 project = 'Local EGA'
-copyright = '2017, NBIS System Developers'
+copyright = f'2017 - {current_year}, NBIS System Developers'
 author = 'NBIS System Developers'
 
 # The version info for the project you're documenting, acts as replacement for

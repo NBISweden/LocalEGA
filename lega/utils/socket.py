@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 '''\
-Unix Domain Socket forwarding to remote machine and proxying remote requests to a given Unix Domain Socket.
-
 Usefull to forward gpg requests to a remote GPG-agent.
+
+Unix Domain Socket forwarding to remote machine and proxying remote requests to a given Unix Domain Socket.
 
 :author: Frédéric Haziza
 :copyright: (c) 2017, NBIS System Developers.
