@@ -1,3 +1,9 @@
+'''
+Utility Functions
+-----------------
+
+Utility functions used internally.
+'''
 import logging
 
 LOG = logging.getLogger('utils')

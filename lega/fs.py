@@ -2,16 +2,19 @@
 # -*- coding: utf-8 -*-
 
 '''\
+FUSE layer
+----------
+
 FUSE layer implementation to capture when a file is uploaded to
 a LocalEGA inbox and send a message (including filesize and
 checksum) to Central EGA.
 
 This is helping the helpdesk on the Central EGA side.
 
-NOTE: There are issues using the file descriptors given by fuse,
-so we re-open the file here in python.
-Calculating checksums and all, might make the file systems slow.
-Hopefully, not too slow.
+.. note::
+    There are issues using the file descriptors given by fuse, so we re-open the file here in python.
+    Calculating checksums and all, might make the file systems slow.
+    Hopefully, not too slow.
 '''
 import sys
 import os

@@ -2,11 +2,8 @@
 # -*- coding: utf-8 -*-
 
 '''
-####################################
-#
-# Verifying the vault files
-#
-####################################
+Verifying the vault files
+-------------------------
 
 This module checks the files in the vault, by decrypting them and
 recalculating their checksum.

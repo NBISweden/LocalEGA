@@ -1,3 +1,6 @@
+'''
+Insures communication with RabbitMQ Message Broker
+'''
 import logging
 import pika
 import json
