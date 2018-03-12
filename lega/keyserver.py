@@ -318,7 +318,7 @@ async def retrieve_active_rsa(request):
     value = _rsa_cache.get(key_id)
     if value:
         return web.json_response({ 'id': key_id,
-                                   'private': value.hex()})
+                                   'public': value.hex()})
     else:
         LOG.warn(f"Requested ReEncryption Key not found.")
         return web.HTTPNotFound()
