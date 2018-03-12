@@ -1,7 +1,4 @@
 '''
-Utility Functions
------------------
-
 Utility functions used internally.
 '''
 import logging
@@ -23,4 +20,3 @@ def sanitize_user_id(user):
     # [a-z_][a-z0-9_-]*? that ends with a fixed @elixir-europe.org
 
     return user.split('@')[0]
-    

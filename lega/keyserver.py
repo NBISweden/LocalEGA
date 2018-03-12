@@ -1,16 +1,79 @@
 #!/usr/bin/env python3
 
-'''\
-Keyserver
----------
-
+'''
 The Keyserver provides a REST endpoint for retrieving PGP and Re-encryption keys.
+
 Active keys endpoint:
 
-* ``/active/pgp`` - GET request for the active PGP key
-* ``/active/rsa`` - GET request for the active RSA key for re-encryption
-* ``/active/pgp/private`` - GET request for the private part of the active PGP key
-* ``/active/pgp/public`` - GET request for the public part of the active PGP key
+
+Active PGP KEY
+^^^^^^^^^^^^^^^^^^^^^^^
+``/active/pgp`` Request:
+
+.. sourcecode:: http
+
+  GET /active/pgp HTTP/1.1
+  Host: localhost:443
+  Accept: application/json
+
+``/active/pgp`` Response:
+
+.. sourcecode:: http
+
+  HTTP/1.1 200 OK
+  Vary: Accept
+  Content-Type: application/json
+
+**Example request**:
+
+.. sourcecode:: http
+
+  GET /active/pgp HTTP/1.1
+  Host: localhost:443
+  Accept: application/json
+
+**Example response**:
+
+.. sourcecode:: http
+
+  HTTP/1.1 200 OK
+  Vary: Accept
+  Content-Type: application/json
+
+
+**Example request**:
+
+.. sourcecode:: http
+
+  GET /active/pgp HTTP/1.1
+  Host: localhost:443
+  Accept: application/json
+
+**Example response**:
+
+.. sourcecode:: http
+
+  HTTP/1.1 200 OK
+  Vary: Accept
+  Content-Type: application/json
+
+**Example request**:
+
+.. sourcecode:: http
+
+  GET /active/pgp HTTP/1.1
+  Host: localhost:443
+  Accept: application/json
+
+**Example response**:
+
+.. sourcecode:: http
+
+  HTTP/1.1 200 OK
+  Vary: Accept
+  Content-Type: application/json
+
+
 
 Retrieve keys endpoint:
 
@@ -250,7 +313,7 @@ async def retrieve_active_rsa(request):
     value = _rsa_cache.get(key_id)
     if value:
         return web.json_response({ 'id': key_id,
-                                   'public': value.hex()})
+                                   'private': value.hex()})
     else:
         LOG.warn(f"Requested ReEncryption Key not found.")
         return web.HTTPNotFound()

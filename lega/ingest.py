@@ -2,11 +2,9 @@
 # -*- coding: utf-8 -*-
 
 '''
-Re-Encryption Worker
---------------------
+Re-Encryption Worker simply consumes message from the message queue.
 
-It simply consumes message from the message queue configured in the [worker] section of the configuration files.
-
+This is configured in the ``[worker]`` section of the configuration files.
 It defaults to the ``tasks`` queue.
 
 It is possible to start several workers.
@@ -55,7 +53,7 @@ def work(active_master_key, master_pubkey, data):
 
     # Use user_id, and not elixir_id
     user_id = sanitize_user_id(data['user'])
-    
+
     # Insert in database
     file_id = db.insert_file(filepath, user_id)
 
@@ -90,7 +88,7 @@ def work(active_master_key, master_pubkey, data):
 
     assert( isinstance(encrypted_hash,str) )
     assert( isinstance(encrypted_algo,str) )
-    
+
     # Check integrity of encrypted file
     LOG.debug(f"Verifying the {encrypted_algo} checksum of encrypted file: {inbox_filepath}")
     if not checksum.is_valid(inbox_filepath, encrypted_hash, hashAlgo = encrypted_algo):
@@ -112,7 +110,7 @@ def work(active_master_key, master_pubkey, data):
     staging_area = Path( CONF.get('ingestion','staging') )
     LOG.info(f"Staging area: {staging_area}")
     #staging_area.mkdir(parents=True, exist_ok=True) # re-create
-        
+
     # Create a unique name for the staging area
     unique_name = str(uuid.uuid5(uuid.NAMESPACE_OID, 'lega'))
     LOG.debug(f'Created an unique filename in the staging area: {unique_name}')
@@ -140,7 +138,7 @@ def work(active_master_key, master_pubkey, data):
                                                target = staging_filepath)
     db.set_encryption(file_id, details, staging_checksum)
     LOG.debug(f'Re-encryption completed')
-    
+
     internal_data['filepath'] = str(staging_filepath)
     LOG.debug(f"Reply message: {data}")
     return data
@@ -171,7 +169,7 @@ def main(args=None):
         assert( master_key )
         LOG.info(f"Master Key ID: {master_key['id']}")
         do_work = partial(work, master_key['id'], bytes.fromhex(master_key['public']))
-        
+
         # upstream link configured in local broker
         consume(do_work, 'files', 'staged')
 

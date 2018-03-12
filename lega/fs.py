@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-'''\
-FUSE layer
-----------
-
+'''
 FUSE layer implementation to capture when a file is uploaded to
-a LocalEGA inbox and send a message (including filesize and
+a LocalEGA inbox
+
+It send a message (including filesize and
 checksum) to Central EGA.
 
 This is helping the helpdesk on the Central EGA side.

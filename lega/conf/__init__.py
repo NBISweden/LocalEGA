@@ -1,8 +1,6 @@
 """\
-Configuration
--------------
+Configuration Module provides a dictionary-like with configuration settings.
 
-This module provides a dictionary-like with configuration settings.
 It also loads the logging settings when ``setup`` is called.
 
 * The ``--log <file>`` argument is used to configuration where the logs go.

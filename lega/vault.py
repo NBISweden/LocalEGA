@@ -3,7 +3,6 @@
 
 '''
 Listener moving files to the Vault
-----------------------------------
 
 It simply consumes message from the message queue configured in the [vault] section.
 
