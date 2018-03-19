@@ -36,6 +36,7 @@ Utility Functions
     lega.utils.checksum
     lega.utils.crypto
     lega.utils.db
+    lega.utils.eureka
     lega.utils.exceptions
     lega.utils.logging
 
