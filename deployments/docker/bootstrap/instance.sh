@@ -45,12 +45,9 @@ chmod 644 ${PRIVATE}/${INSTANCE}/pgp/ega2.pub
 
 #########################################################################
 
-echomsg "\t* the RSA public and private key"
-${OPENSSL} genpkey -algorithm RSA -out ${PRIVATE}/${INSTANCE}/rsa/ega.sec -pkeyopt rsa_keygen_bits:2048
-${OPENSSL} rsa -pubout -in ${PRIVATE}/${INSTANCE}/rsa/ega.sec -out ${PRIVATE}/${INSTANCE}/rsa/ega.pub
-
-${OPENSSL} genpkey -algorithm RSA -out ${PRIVATE}/${INSTANCE}/rsa/ega2.sec -pkeyopt rsa_keygen_bits:2048
-${OPENSSL} rsa -pubout -in ${PRIVATE}/${INSTANCE}/rsa/ega2.sec -out ${PRIVATE}/${INSTANCE}/rsa/ega2.pub
+echomsg "\t* the RSA private key"
+${OPENSSL} genpkey -algorithm RSA -pass pass:"${RSA_PASSPHRASE}" -out ${PRIVATE}/${INSTANCE}/rsa/ega.sec -pkeyopt rsa_keygen_bits:2048 -aes-256-cbc
+${OPENSSL} genpkey -algorithm RSA -pass pass:"${RSA_PASSPHRASE}" -out ${PRIVATE}/${INSTANCE}/rsa/ega2.sec -pkeyopt rsa_keygen_bits:2048 -aes-256-cbc
 
 #########################################################################
 
@@ -66,22 +63,22 @@ rsa : rsa.key.1
 pgp : pgp.key.1
 
 [rsa.key.1]
-public : /etc/ega/rsa/ega.pub
-private : /etc/ega/rsa/ega.sec
+path : /etc/ega/rsa/ega.sec
+passphrase : ${RSA_PASSPHRASE}
+expire: 30/MAR/19 08:00:00
 
 [rsa.key.2]
-public : /etc/ega/rsa/ega2.pub
-private : /etc/ega/rsa/ega2.sec
+path : /etc/ega/rsa/ega2.sec
+passphrase : ${RSA_PASSPHRASE}
+expire: 30/MAR/19 08:00:00
 
 [pgp.key.1]
-public : /etc/ega/pgp/ega.pub
-private : /etc/ega/pgp/ega.sec
+path : /etc/ega/pgp/ega.sec
 passphrase : ${PGP_PASSPHRASE}
 expire: 30/MAR/19 08:00:00
 
 [pgp.key.2]
-public : /etc/ega/pgp/ega2.pub
-private : /etc/ega/pgp/ega2.sec
+path : /etc/ega/pgp/ega2.sec
 passphrase : ${PGP_PASSPHRASE}
 expire: 30/MAR/18 08:00:00
 EOF
@@ -93,10 +90,14 @@ log = /etc/ega/logger.yml
 
 [ingestion]
 # Keyserver communication
-keyserver_endpoint_pgp = https://ega-keys-${INSTANCE}/retrieve/pgp/%s
-keyserver_endpoint_rsa = https://ega-keys-${INSTANCE}/active/rsa
+keyserver_endpoint_pgp = http://ega-keys-${INSTANCE}:443/retrieve/pgp/%s
+keyserver_endpoint_rsa = http://ega-keys-${INSTANCE}:443/active/rsa
 
 decrypt_cmd = python3.6 -u -m lega.openpgp %(file)s
+
+[outgestion]
+# Just for test
+keyserver_endpoint = https://ega-keys-${INSTANCE}:443/temp/file/%s
 
 ## Connecting to Local EGA
 [broker]
@@ -107,6 +108,9 @@ host = ega-db-${INSTANCE}
 username = ${DB_USER}
 password = ${DB_PASSWORD}
 try = ${DB_TRY}
+
+[eureka]
+endpoint = http://cega-eureka:8761
 EOF
 
 # echomsg "\t* SFTP Inbox port"
@@ -420,9 +424,6 @@ services:
       - mq-${INSTANCE}
       - keys-${INSTANCE}
     image: nbisweden/ega-base
-    # Required external link
-    external_links:
-      - cega-mq:cega-mq
     environment:
       - MQ_INSTANCE=ega-mq-${INSTANCE}
       - KEYSERVER_INSTANCE=ega-keys-${INSTANCE}
@@ -436,7 +437,6 @@ services:
     restart: on-failure:3
     networks:
       - lega_${INSTANCE}
-      - cega
     entrypoint: ["/bin/bash", "/usr/local/bin/entrypoint.sh"]
 
   # Key server
@@ -445,27 +445,30 @@ services:
     hostname: ega-keys-${INSTANCE}
     container_name: ega-keys-${INSTANCE}
     image: nbisweden/ega-base
-    tty: true
+    # For the /temp/file/{stable_id} queries
+    depends_on:
+      - db-${INSTANCE}
     expose:
       - "443"
+    #ports:
+    #  - "${DOCKER_PORT_keyserver}:443"
     volumes:
        - ./${INSTANCE}/ega.conf:/etc/ega/conf.ini:ro
        - ./${INSTANCE}/logger.yml:/etc/ega/logger.yml:ro
        - ./${INSTANCE}/keys.conf:/etc/ega/keys.ini:ro
        - ./${INSTANCE}/certs/ssl.cert:/etc/ega/ssl.cert:ro
        - ./${INSTANCE}/certs/ssl.key:/etc/ega/ssl.key:ro
-       - ./${INSTANCE}/pgp/ega.pub:/etc/ega/pgp/ega.pub:ro
        - ./${INSTANCE}/pgp/ega.sec:/etc/ega/pgp/ega.sec:ro
-       - ./${INSTANCE}/pgp/ega2.pub:/etc/ega/pgp/ega2.pub:ro
        - ./${INSTANCE}/pgp/ega2.sec:/etc/ega/pgp/ega2.sec:ro
-       - ./${INSTANCE}/rsa/ega.pub:/etc/ega/rsa/ega.pub:ro
        - ./${INSTANCE}/rsa/ega.sec:/etc/ega/rsa/ega.sec:ro
-       - ./${INSTANCE}/rsa/ega2.pub:/etc/ega/rsa/ega2.pub:ro
        - ./${INSTANCE}/rsa/ega2.sec:/etc/ega/rsa/ega2.sec:ro
        - ../../../lega:/root/.local/lib/python3.6/site-packages/lega
     restart: on-failure:3
+    external_links:
+      - cega-eureka:cega-eureka
     networks:
       - lega_${INSTANCE}
+      - cega
     entrypoint: ["ega-keyserver","--keys","/etc/ega/keys.ini"]
 
   # Vault
@@ -477,23 +480,18 @@ services:
     hostname: ega-vault
     container_name: ega-vault-${INSTANCE}
     image: nbisweden/ega-base
-    # Required external link
-    external_links:
-      - cega-mq:cega-mq
     environment:
       - MQ_INSTANCE=ega-mq-${INSTANCE}
-      - CEGA_INSTANCE=cega-mq
     volumes:
        - staging_${INSTANCE}:/ega/staging
        - vault_${INSTANCE}:/ega/vault
        - ./${INSTANCE}/ega.conf:/etc/ega/conf.ini:ro
        - ./${INSTANCE}/logger.yml:/etc/ega/logger.yml:ro
        - ../images/vault/entrypoint.sh:/usr/local/bin/entrypoint.sh
-       # - ../../../lega:/root/.local/lib/python3.6/site-packages/lega
+       - ../../../lega:/root/.local/lib/python3.6/site-packages/lega
     restart: on-failure:3
     networks:
       - lega_${INSTANCE}
-      - cega
     entrypoint: ["/bin/bash", "/usr/local/bin/entrypoint.sh"]
 
   # Logging & Monitoring (ELK: Elasticsearch, Logstash, Kibana).

@@ -28,6 +28,7 @@ Users are handled throught Central EGA, directly.
               'ega-verify = lega.verify:main',
               'ega-monitor = lega.monitor:main',
               'ega-keyserver = lega.keyserver:main',
+              'ega-outgest = lega.outgest:main', # just for testing
               'ega-conf = lega.conf.__main__:main',
           ]
       },
@@ -36,12 +37,12 @@ Users are handled throught Central EGA, directly.
       #     'pika==0.11.0',
       #     'colorama==0.3.7',
       #     'psycopg2==2.7.4',
+      #     'aiopg'==0.13.0,
       #     'aiohttp==2.3.8',
       #     'aiohttp-jinja2==0.13.0',
       #     'fusepy',
       #     'sphinx_rtd_theme',
-      #     'pycryptodomex==3.4.7',
-      #     'cryptography==2.1.3',
+      #     'cryptography==2.1.4',
       #     'pgpy',
       # ],
 )
