@@ -73,7 +73,7 @@ Miscellaneous
    :maxdepth: 1
    :name: extra
 
-   API documentation    <code>
+   Python Modules       <code>
    Contributing         <CONTRIBUTING>
    policies
 

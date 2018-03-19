@@ -17,11 +17,6 @@ Source code documentation
     lega.vault
     lega.verify
 
-*************
-Configuration
-*************
-
-.. automodule:: lega.conf
 
 *****************
 Utility Functions
@@ -46,14 +41,6 @@ OpenPGP
 
 .. automodule:: lega.openpgp
 
-.. autosummary::
-    :toctree::
-
-    lega.openpgp.constants
-    lega.openpgp.generate
-    lega.openpgp.iobuf
-    lega.openpgp.packet
-    lega.openpgp.utils
 
 **********
 FUSE layer
@@ -61,7 +48,6 @@ FUSE layer
 
 .. automodule:: lega.fs
 
-.. autoclass:: LegaFS
 
 ********************
 Re-Encryption Worker

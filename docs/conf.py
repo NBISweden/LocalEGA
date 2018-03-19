@@ -4,6 +4,7 @@
 import os
 import sys
 import datetime
+from unittest.mock import MagicMock
 
 # Get the project root dir, which is the parent dir of this
 #sys.path.insert(0, os.path.dirname(os.getcwd()))
@@ -13,6 +14,16 @@ sys.path.insert(0, os.path.abspath('..'))
 import lega
 
 # -- General configuration ------------------------------------------------
+
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+        return MagicMock()
+
+
+# Some modules need to be mocked
+MOCK_MODULES = ['fuse', 'yaml', 'pika', 'aiohttp', 'asyncio', 'psycopg2', 'aiopg']
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 # If your documentation needs a minimal Sphinx version, state it here.
 #
