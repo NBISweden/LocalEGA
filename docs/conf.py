@@ -89,6 +89,8 @@ pygments_style = 'sphinx'
 todo_include_todos = False
 
 
+autosummary_generate = True
+
 # -- Options for HTML output ----------------------------------------------
 
 html_title = 'NBIS Local EGA'

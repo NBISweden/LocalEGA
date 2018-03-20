@@ -1,5 +1,5 @@
 -------------------------
-Source code documentation
+Python Modules
 -------------------------
 
 .. automodule:: lega
@@ -11,12 +11,11 @@ Source code documentation
     lega.conf
     lega.utils
     lega.openpgp
-    lega.keyserver
     lega.fs
     lega.ingest
     lega.vault
     lega.verify
-
+    lega.keyserver
 
 *****************
 Utility Functions
@@ -25,7 +24,7 @@ Utility Functions
 .. automodule:: lega.utils
 
 .. autosummary::
-    :toctree::
+   :toctree: lega.utils
 
     lega.utils.amqp
     lega.utils.checksum

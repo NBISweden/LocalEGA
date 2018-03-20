@@ -2,6 +2,7 @@
 Eureka Discovery for LocalEGA.
 
 Inspired by https://github.com/wasp/eureka
+
 Apache 2.0 License https://github.com/wasp/eureka/blob/master/LICENSE
 """
 import asyncio

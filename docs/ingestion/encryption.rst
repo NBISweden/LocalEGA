@@ -34,9 +34,12 @@ key, from the staged file, making it harder for an attacker to decrypt
 the vault files. For the moment, losing that information is
 problematic, so we keep it in the vault file itself.
 
+OpenPGP
+^^^^^^^
+
+
 Keyserver REST API
 ^^^^^^^^^^^^^^^^^^
-
 
 Active keys endpoint (current key types supported are PGP and RSA):
 
