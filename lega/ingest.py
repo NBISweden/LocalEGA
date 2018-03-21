@@ -1,21 +1,25 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-'''
-Re-Encryption Worker simply consumes message from the message queue.
-
-This is configured in the ``[worker]`` section of the configuration files.
-It defaults to the ``tasks`` queue.
+'''Worker reading messages from the ``files`` queue, decrypting and
+re-encrypting inbox files into a staging area.
 
 It is possible to start several workers.
 
 When a message is consumed, it must be of the form:
 
 * ``filepath``
-* ``target``
 * ``stable_id``
-* ``hash`` (of the unencrypted content)
-* ``hash_algo`` - the associated hash algorithm
+* ``user_id``
+
+and optionally 2 more integrity fields, called ``encrypted_integrity``
+and ``unencrypted_integrity``, each with:
+
+* ``checksum`` value
+* ``algorithm`` - the associated hash algorithm
+
+Upon completion, a message is sent to the local exchange with the
+routing key :``staged``.
 '''
 
 import sys
