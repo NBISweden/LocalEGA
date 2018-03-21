@@ -1,24 +1,25 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-'''
-####################################
-#
-# Re-Encryption Worker
-#
-####################################
-
-It simply consumes message from the message queue configured in the [worker] section of the configuration files.
-
-It defaults to the `tasks` queue.
+'''Worker reading messages from the ``files`` queue, decrypting and
+re-encrypting inbox files into a staging area.
 
 It is possible to start several workers.
 
 When a message is consumed, it must be of the form:
-* filepath
-* target
-* hash (of the unencrypted content)
-* hash_algo: the associated hash algorithm
+
+* ``filepath``
+* ``stable_id``
+* ``user_id``
+
+and optionally 2 more integrity fields, called ``encrypted_integrity``
+and ``unencrypted_integrity``, each with:
+
+* ``checksum`` value
+* ``algorithm`` - the associated hash algorithm
+
+Upon completion, a message is sent to the local exchange with the
+routing key :``staged``.
 '''
 
 import sys
@@ -43,12 +44,13 @@ def work(master_key, data):
     '''Main ingestion function
 
     The data is of the form:
+
     * user id
     * a filepath
     * encrypted hash information (with both the hash value and the hash algorithm)
     * unencrypted hash information (with both the hash value and the hash algorithm)
 
-    The hash algorithm we support are MD5 and SHA256, for the moment.
+    .. note:: The supported hash algorithm are, for the moment, MD5 and SHA256.
     '''
 
     filepath = data['filepath']
@@ -57,7 +59,7 @@ def work(master_key, data):
 
     # Use user_id, and not elixir_id
     user_id = sanitize_user_id(data['user'])
-    
+
     # Insert in database
     file_id = db.insert_file(filepath, user_id, stable_id)
 
@@ -92,7 +94,7 @@ def work(master_key, data):
 
     assert( isinstance(encrypted_hash,str) )
     assert( isinstance(encrypted_algo,str) )
-    
+
     # Check integrity of encrypted file
     LOG.debug(f"Verifying the {encrypted_algo} checksum of encrypted file: {inbox_filepath}")
     if not checksum.is_valid(inbox_filepath, encrypted_hash, hashAlgo = encrypted_algo):
@@ -114,7 +116,7 @@ def work(master_key, data):
     staging_area = Path( CONF.get('ingestion','staging') )
     LOG.info(f"Staging area: {staging_area}")
     #staging_area.mkdir(parents=True, exist_ok=True) # re-create
-        
+
     # Create a unique name for the staging area
     unique_name = str(uuid.uuid5(uuid.NAMESPACE_OID, 'lega'))
     LOG.debug(f'Created an unique filename in the staging area: {unique_name}')
@@ -141,7 +143,7 @@ def work(master_key, data):
                                                target = staging_filepath)
     db.set_encryption(file_id, details, staging_checksum)
     LOG.debug(f'Re-encryption completed')
-    
+
     internal_data['filepath'] = str(staging_filepath)
     LOG.debug(f"Reply message: {data}")
     return data
@@ -170,7 +172,7 @@ def main(args=None):
     LOG.info(f"Master Key ID: {master_key['id']}")
     LOG.debug(f"Master Key: {master_key}")
     do_work = partial(work, master_key)
-        
+
     # upstream link configured in local broker
     consume(do_work, 'files', 'staged')
 
