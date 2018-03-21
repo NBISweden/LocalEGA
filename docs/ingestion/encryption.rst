@@ -36,6 +36,7 @@ problematic, so we keep it in the vault file itself.
 
 OpenPGP
 ^^^^^^^
+OpenPGP module based on RFC4880 https://tools.ietf.org/html/rfc4880.
 
 
 Keyserver REST API
@@ -43,15 +44,15 @@ Keyserver REST API
 
 Active keys endpoint (current key types supported are PGP and RSA):
 
-* ``/active/{key_type}`` - GET request for the active key
-* ``/active/{key_type}/private`` - GET request for the private part of the active key
-* ``/active/{key_type}/public`` - GET request for the public part of the active key
+* ``/active/<key_type>`` - GET request for the active key
+* ``/active/<key_type>/private`` - GET request for the private part of the active key
+* ``/active/<key_type>/public`` - GET request for the public part of the active key
 
 Retrieve keys endpoint:
 
-* ``/retrieve/{key_type}/{key_id}`` - GET request for the active PGP key with a known keyID of fingerprint
-* ``/retrieve/{key_type}/{key_id}/private`` - GET request for the private part of the active PGP key with a known keyID of fingerprint
-* ``/retrieve/{key_type}/<key_id>/public`` - GET request for the public part of the active PGP key with a known keyID of fingerprint
+* ``/retrieve/<key_type>/<key_id>`` - GET request for the active PGP key with a known keyID of fingerprint
+* ``/retrieve/<key_type>/<key_id>/private`` - GET request for the private part of the active PGP key with a known keyID of fingerprint
+* ``/retrieve/<key_type>/<key_id>/public`` - GET request for the public part of the active PGP key with a known keyID of fingerprint
 
 Admin endpoint:
 
