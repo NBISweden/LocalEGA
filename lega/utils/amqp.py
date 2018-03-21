@@ -1,5 +1,5 @@
 '''
-Insures communication with RabbitMQ Message Broker
+Ensures communication with RabbitMQ Message Broker
 '''
 import logging
 import pika
@@ -13,7 +13,7 @@ LOG = logging.getLogger('amqp')
 def get_connection(domain, blocking=True):
     '''
     Returns a blocking connection to the Message Broker supporting AMQP(S).
-    
+
     The host, portm virtual_host, username, password and
     heartbeat values are read from the CONF argument.
     So are the SSL options.
@@ -65,7 +65,7 @@ def publish(message, channel, exchange, routing, correlation_id=None):
                           properties  = pika.BasicProperties(correlation_id=correlation_id or str(uuid.uuid4()),
                                                              content_type='application/json',
                                                              delivery_mode=2))
-    
+
 
 def consume(work, from_queue, to_routing):
     '''Blocking function, registering callback `work` to be called.
@@ -104,8 +104,8 @@ def consume(work, from_queue, to_routing):
 
         # Acknowledgment: Cancel the message resend in case MQ crashes
         LOG.debug(f'Sending ACK for message {message_id} (Correlation ID: {correlation_id})')
-        channel.basic_ack(delivery_tag=method_frame.delivery_tag)        
-            
+        channel.basic_ack(delivery_tag=method_frame.delivery_tag)
+
     # Let's do this
     try:
         from_channel.basic_consume(process_request, queue=from_queue)
@@ -114,5 +114,3 @@ def consume(work, from_queue, to_routing):
         from_channel.stop_consuming()
     finally:
         connection.close()
-
-

@@ -13,6 +13,7 @@ When a message is consumed, it must be of the form:
 
 * ``filepath``
 * ``target``
+* ``stable_id``
 * ``hash`` (of the unencrypted content)
 * ``hash_algo`` - the associated hash algorithm
 '''
@@ -45,7 +46,7 @@ def work(master_key, data):
     * encrypted hash information (with both the hash value and the hash algorithm)
     * unencrypted hash information (with both the hash value and the hash algorithm)
 
-    .. note:: The hash algorithm we support are MD5 and SHA256, for the moment.
+    .. note:: The supported hash algorithm are, for the moment, MD5 and SHA256.
     '''
 
     filepath = data['filepath']
@@ -54,7 +55,7 @@ def work(master_key, data):
 
     # Use user_id, and not elixir_id
     user_id = sanitize_user_id(data['user'])
-    
+
     # Insert in database
     file_id = db.insert_file(filepath, user_id, stable_id)
 
@@ -89,7 +90,7 @@ def work(master_key, data):
 
     assert( isinstance(encrypted_hash,str) )
     assert( isinstance(encrypted_algo,str) )
-    
+
     # Check integrity of encrypted file
     LOG.debug(f"Verifying the {encrypted_algo} checksum of encrypted file: {inbox_filepath}")
     if not checksum.is_valid(inbox_filepath, encrypted_hash, hashAlgo = encrypted_algo):
@@ -111,7 +112,7 @@ def work(master_key, data):
     staging_area = Path( CONF.get('ingestion','staging') )
     LOG.info(f"Staging area: {staging_area}")
     #staging_area.mkdir(parents=True, exist_ok=True) # re-create
-        
+
     # Create a unique name for the staging area
     unique_name = str(uuid.uuid5(uuid.NAMESPACE_OID, 'lega'))
     LOG.debug(f'Created an unique filename in the staging area: {unique_name}')
@@ -138,7 +139,7 @@ def work(master_key, data):
                                                target = staging_filepath)
     db.set_encryption(file_id, details, staging_checksum)
     LOG.debug(f'Re-encryption completed')
-    
+
     internal_data['filepath'] = str(staging_filepath)
     LOG.debug(f"Reply message: {data}")
     return data
