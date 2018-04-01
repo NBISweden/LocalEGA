@@ -24,5 +24,5 @@ in order to insert or manipulate the database entry.
                          from_user  errors.from_user%TYPE) RETURNS void
 
 
-Look at :doc:`the SQL definitions </../extras/db.sql>` if you are also
+Look at :doc:`the SQL definitions </../extras/db.sql>` if one is also
 interested in the database triggers.
