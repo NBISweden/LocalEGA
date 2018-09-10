@@ -50,15 +50,15 @@ def run_checksum(data, integrity, filename):
         h, algo = checksum.get_from_companion(filename)
         data[integrity] = {'checksum': h, 'algorithm': algo }
 
-        assert( isinstance(h,str) )
-        assert( isinstance(algo,str) )
+    assert( isinstance(h,str) )
+    assert( isinstance(algo,str) )
 
-        # Check integrity of encrypted file
-        LOG.debug(f"Verifying the {algo} checksum of file: {filename}")
-        if not checksum.is_valid(filename, h, hashAlgo = algo):
-            LOG.error(f"Invalid {algo} checksum for {filename}")
-            raise exceptions.Checksum(algo, file=filename, decrypted=False)
-        LOG.debug(f'Valid {algo} checksum for {filename}')
+    # Check integrity of encrypted file
+    LOG.debug(f"Verifying the {algo} checksum of file: {filename}")
+    if not checksum.is_valid(filename, h, hashAlgo = algo):
+        LOG.error(f"Invalid {algo} checksum for {filename}")
+        raise exceptions.Checksum(algo, file=filename, decrypted=False)
+    LOG.debug(f'Valid {algo} checksum for {filename}')
 
 @db.catch_error
 @db.crypt4gh_to_user_errors
