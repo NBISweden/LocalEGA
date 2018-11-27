@@ -24,24 +24,24 @@ TARGET_PREFIX=nbisweden/ega
 all: os base inbox
 
 os:
-    docker build --squash \
-                 --tag $(TARGET_PREFIX)-$@:latest \
-                 $@
+	docker build --squash \
+				 --tag $(TARGET_PREFIX)-$@:latest \
+				 $@
 
 base:
 	docker build --build-arg checkout=$(CHECKOUT) \
-                     --cache-from $(TARGET_PREFIX)-$@:latest \
-                     --tag $(TARGET_PREFIX)-$@:$(TAG) \
-                     --tag $(TARGET_PREFIX)-$@:dev \
-                     --tag $(TARGET_PREFIX)-$@:latest \
-                     $@
+				 --cache-from $(TARGET_PREFIX)-$@:latest \
+				 --tag $(TARGET_PREFIX)-$@:$(TAG) \
+				 --tag $(TARGET_PREFIX)-$@:dev \
+				 --tag $(TARGET_PREFIX)-$@:latest \
+				 $@
 
 inbox:
 	docker build --cache-from $(TARGET_PREFIX)-$@:latest \
-                    --tag $(TARGET_PREFIX)-$@:$(TAG) \
-                    --tag $(TARGET_PREFIX)-$@:dev \
-                    --tag $(TARGET_PREFIX)-$@:latest \
-                    $@
+				 --tag $(TARGET_PREFIX)-$@:$(TAG) \
+				 --tag $(TARGET_PREFIX)-$@:dev \
+				 --tag $(TARGET_PREFIX)-$@:latest \
+				 $@
 
 
 clean:
