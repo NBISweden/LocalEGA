@@ -33,7 +33,10 @@ jobs:
     - stage: image build
       before_script:
         - cd docker
+        - sudo cp daemon.json /etc/docker/
       script:
+        - echo "Activating experimental features"
+        - sudo service docker restart
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
         - ../extras/travis_check_image_change.sh os
         # Pulling image for layer caching
