@@ -24,10 +24,9 @@ TARGET_PREFIX=nbisweden/ega
 all: os base inbox
 
 os:
-	docker build --build-arg DEV_PACKAGES="$(DEV_PACKAGES)" \
-                     --cache-from $(TARGET_PREFIX)-$@:latest \
-                     --tag $(TARGET_PREFIX)-$@:latest \
-                     $@
+    docker build --squash \
+                 --tag $(TARGET_PREFIX)-$@:latest \
+                 $@
 
 base:
 	docker build --build-arg checkout=$(CHECKOUT) \
