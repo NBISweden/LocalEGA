@@ -3,6 +3,9 @@ dist: xenial
 language: python
 
 python: 3.6
+before_install:
+  - jdk_switcher use oraclejdk8
+
 install:
   - echo "Dependencies on Travis? No, thanks"
 
