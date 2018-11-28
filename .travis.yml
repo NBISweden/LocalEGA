@@ -10,6 +10,7 @@ before_install:
 
 install:
   - echo "Dependencies on Travis? No, thanks"
+  - . ./install-jdk.sh -F 10 -L BCL
 
 git:
   depth: false
