@@ -95,7 +95,7 @@ RUN git clone https://github.com/NBISweden/LocalEGA.git /root/LocalEGA && \
 ##
 #################################################
 
-FROM nbisweden/ega-os:latest
+FROM nbisweden/ega-os:1811
 
 LABEL maintainer "EGA System Developers"
 
