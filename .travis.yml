@@ -1,4 +1,6 @@
 dist: xenial
+group: edge
+jdk: oraclejdk8
 
 language: python
 
