@@ -84,7 +84,7 @@ jobs:
     - stage: integration tests
       before_script:
         - cd docker
-        - make bootstrap
+        - make bootstrap ARGS='--keyserver ega'
         - ../extras/travis_push_docker_hub.sh
         - sudo chown -R travis private
         - docker network create cega
