@@ -100,6 +100,7 @@ check: $(FILE).c4ga $(FILE).sha256
 	@echo "Message found in the CentralEGA broker"
 
 $(FILE).sha256: $(FILE)
+	@echo $(FILE)
 	$(call get_shasum,$<,$@)
 
 ####################################################################
