@@ -174,7 +174,7 @@ services:
     container_name: db
     labels:
         lega_label: "db"
-    image: postgres:10-alpine
+    image: postgres:10
     volumes:
       - db:/ega/data
       - ../images/db/postgresql.conf:/etc/ega/pg.conf:ro
