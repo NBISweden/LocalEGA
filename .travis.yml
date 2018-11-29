@@ -72,7 +72,7 @@ jobs:
     - stage: integration tests
       before_script:
         - cd docker
-        - make bootstrap ARGS='--inbox mina --keyserver ega'
+        - make bootstrap ARGS='--keyserver ega'
         - ../extras/travis_push_docker_hub.sh
         - sudo chown -R travis private
         - docker network create cega
@@ -84,8 +84,8 @@ jobs:
     - stage: integration tests
       before_script:
         - cd docker
-        - ../extras/travis_push_docker_hub.sh
         - make bootstrap
+        - ../extras/travis_push_docker_hub.sh
         - sudo chown -R travis private
         - docker network create cega
         - docker-compose up -d #--scale ingest=3 --scale verify=5
