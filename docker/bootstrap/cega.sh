@@ -160,7 +160,7 @@ services:
     ports:
       - "15670:15672"
       - "5672:5672"
-    image: rabbitmq:3.6.14-management
+    image: rabbitmq:3.6-management-alpine
     container_name: cega-mq
     labels:
         lega_label: "cega-mq"
