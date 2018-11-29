@@ -100,8 +100,7 @@ check: $(FILE).c4ga $(FILE).sha256
 	@echo "Message found in the CentralEGA broker"
 
 $(FILE).sha256: $(FILE)
-	@echo $(FILE)
-	$(call get_shasum,$<,$@)
+	$(shell shasum -a 256 $(1) | cut -d' ' -f1 > $(2))
 
 ####################################################################
 ## Cleaning
