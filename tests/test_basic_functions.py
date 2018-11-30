@@ -1,13 +1,13 @@
 from lega.utils.checksum import instantiate, calculate, is_valid, get_from_companion, supported_algorithms
 from lega.utils.exceptions import UnsupportedHashAlgorithm, CompanionNotFound
-from lega.conf.__main__ import main
+# from lega.conf.__main__ import main
 import hashlib
 import unittest
 from unittest import mock
 from lega.utils import sanitize_user_id
 from testfixtures import tempdir
 # import sys
-from io import StringIO
+# from io import StringIO
 
 
 class TestBasicFunctions(unittest.TestCase):
@@ -66,12 +66,12 @@ class TestBasicFunctions(unittest.TestCase):
         result = supported_algorithms()
         self.assertEqual(('md5', 'sha256'), result)
 
-    def test_config_main(self):
-        """Testing main configuration."""
-        with mock.patch('sys.stdout', new=StringIO()) as fake_stdout:
-                main(['--conf', 'fake/conf.ini'])
-                self.assertTrue(fake_stdout.getvalue(), 'Configuration files:')
-
-        with mock.patch('sys.stdout', new=StringIO()) as fake_stdout:
-                main(['--list'])
-                self.assertTrue(fake_stdout.getvalue(), 'Configuration values:')
+    # def test_config_main(self):
+    #     """Testing main configuration."""
+    #     with mock.patch('sys.stdout', new=StringIO()) as fake_stdout:
+    #             main(['--conf', 'fake/conf.ini'])
+    #             self.assertTrue(fake_stdout.getvalue(), 'Configuration files:')
+    #
+    #     with mock.patch('sys.stdout', new=StringIO()) as fake_stdout:
+    #             main(['--list'])
+    #             self.assertTrue(fake_stdout.getvalue(), 'Configuration values:')
