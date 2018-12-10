@@ -1,8 +1,8 @@
 """Utility functions used internally."""
 
-import logging
+from .logging import LEGALogger
 
-LOG = logging.getLogger(__name__)
+LOG = LEGALogger(__name__)
 
 
 def get_file_content(f, mode='rb'):

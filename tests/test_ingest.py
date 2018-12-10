@@ -39,7 +39,8 @@ class testIngest(unittest.TestCase):
         mock_broker.channel.return_value = mock.Mock()
         infile = filedir.write('infile.in', bytearray.fromhex(pgp_data.ENC_FILE))
         data = {'filepath': infile, 'user': 'user_id@elixir-europe.org'}
-        result = work(store, mock_broker, data)
+        correlation_id = '1234-5678'
+        result = work(store, mock_broker, correlation_id, data)
         mocked = {'filepath': infile, 'user': 'user_id@elixir-europe.org',
                   'file_id': 32,
                   'org_msg': {'filepath': infile, 'user': 'user_id@elixir-europe.org'},
@@ -68,7 +69,8 @@ class testIngest(unittest.TestCase):
         infile = filedir.write('infile.in', bytearray.fromhex(pgp_data.ENC_FILE))
 
         data = {'filepath': infile, 'user': 'user_id@elixir-europe.org'}
-        result = work(store, mock_broker, data)
+        correlation_id = '1234-5678'
+        result = work(store, mock_broker, correlation_id, data)
         self.assertEqual(None, result)
         filedir.cleanup()
 
@@ -93,7 +95,8 @@ class testIngest(unittest.TestCase):
         infile = filedir.write('infile.in', bytearray.fromhex(pgp_data.ENC_FILE))
 
         data = {'filepath': infile, 'user': 'user_id@elixir-europe.org'}
-        result = work(store, mock_broker, data)
+        correlation_id = '1234-5678'
+        result = work(store, mock_broker, correlation_id, data)
         self.assertEqual(None, result)
         mock_set_error.assert_called()
         filedir.cleanup()
@@ -121,7 +124,8 @@ class testIngest(unittest.TestCase):
         infile = filedir.write('infile.in', bytearray.fromhex(pgp_data.ENC_FILE))
 
         data = {'filepath': infile, 'user': 'user_id@elixir-europe.org'}
-        result = work(store, mock_broker, data)
+        correlation_id = '1234-5678'
+        result = work(store, mock_broker, correlation_id, data)
         self.assertEqual(None, result)
         mock_set_error.assert_called()
         mock_publish.assert_called()

@@ -13,18 +13,21 @@ registered upstream queue.
 """
 
 import sys
-import logging
 
 from .conf import CONF
 from .utils import db
 from .utils.amqp import consume, get_connection
+from .utils.logging import LEGALogger
 
-LOG = logging.getLogger(__name__)
+LOG = LEGALogger(__name__)
 
 
 @db.catch_error
-def work(data):
+def work(correlation_id, data):
     """Read a message containing the ids and add it to the database."""
+    # Adding correlation ID to context
+    LOG.add_correlation_id(correlation_id)
+
     file_id = data['file_id']
     stable_id = data['stable_id']
     LOG.info(f"Mapping {file_id} to stable_id {stable_id}")
@@ -32,6 +35,8 @@ def work(data):
     db.set_stable_id(file_id, stable_id)  # That will flag the entry as 'Ready'
 
     LOG.info(f"Stable ID {stable_id} mapped to {file_id}")
+
+    LOG.remove_correlation_id()
     return None
 
 

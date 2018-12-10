@@ -5,7 +5,6 @@
 import sys
 import traceback
 from functools import wraps
-import logging
 import psycopg2
 from socket import gethostname
 from time import sleep
@@ -15,8 +14,9 @@ from legacryptor import exceptions as crypt_exc
 from ..conf import CONF
 from .exceptions import FromUser, KeyserverError, PGPKeyError
 from .amqp import publish, get_connection
+from .logging import LEGALogger
 
-LOG = logging.getLogger(__name__)
+LOG = LEGALogger(__name__)
 
 
 ######################################

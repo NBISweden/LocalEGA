@@ -13,7 +13,6 @@ with the routing key: ``completed``.
 
 import sys
 import os
-import logging
 from functools import partial
 from urllib.request import urlopen
 from urllib.error import HTTPError
@@ -24,8 +23,9 @@ from legacryptor.crypt4gh import get_key_id, header_to_records, body_decrypt
 from .conf import CONF
 from .utils import db, exceptions, storage
 from .utils.amqp import consume, get_connection
+from .utils.logging import LEGALogger
 
-LOG = logging.getLogger(__name__)
+LOG = LEGALogger(__name__)
 
 
 def get_records(header):
@@ -61,8 +61,10 @@ def get_records(header):
 
 @db.catch_error
 @db.crypt4gh_to_user_errors
-def work(chunk_size, mover, channel, data):
+def work(chunk_size, mover, channel, correlation_id, data):
     """Verify that the file in the vault can be properly decrypted."""
+    LOG.add_correlation_id(correlation_id)
+
     LOG.info('Verification | message: %s', data)
 
     file_id = data['file_id']
@@ -98,6 +100,8 @@ def work(chunk_size, mover, channel, data):
     org_msg['reference'] = file_id
     org_msg['checksum'] = {'value': digest, 'algorithm': 'sha256'}
     LOG.debug(f"Reply message: {org_msg}")
+
+    LOG.remove_correlation_id()
     return org_msg
 
 

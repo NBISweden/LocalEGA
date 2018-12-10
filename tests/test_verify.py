@@ -138,6 +138,7 @@ class testVerify(unittest.TestCase):
         mock_broker.channel.return_value = mock.Mock()
         infile = filedir.write('infile.in', 'text'.encode("utf-8"))
         data = {'header': pgp_data.ENC_FILE, 'stable_id': '1', 'vault_path': infile, 'file_id': '123', 'org_msg': {}}
-        result = work('10', store, mock_broker, data)
+        correlation_id = '1234-5678'
+        result = work('10', store, mock_broker, correlation_id, data)
         self.assertTrue({'status': {'state': 'COMPLETED', 'details': '1'}}, result)
         filedir.cleanup()

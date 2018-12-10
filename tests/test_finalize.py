@@ -22,7 +22,8 @@ class testFinalize(unittest.TestCase):
         """Test finalize worker, should insert into database."""
         # mock_db.set_stable_id.return_value = mock.Mock()
         data = {'stable_id': '1', 'file_id': '123'}
-        work(data)
+        correlation_id = '1234-5678'
+        work(correlation_id, data)
         mock_db.set_stable_id.assert_called_with('123', '1')
 
     @mock.patch('lega.finalize.get_connection')

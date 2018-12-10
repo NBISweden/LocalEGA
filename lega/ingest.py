@@ -18,7 +18,6 @@ routing key :``archived``.
 """
 
 import sys
-import logging
 from pathlib import Path
 from functools import partial
 
@@ -27,14 +26,18 @@ from legacryptor.crypt4gh import get_header
 from .conf import CONF
 from .utils import db, exceptions, sanitize_user_id, storage
 from .utils.amqp import consume, publish, get_connection
+from .utils.logging import LEGALogger
 
-LOG = logging.getLogger(__name__)
+LOG = LEGALogger(__name__)
 
 
 @db.catch_error
 @db.crypt4gh_to_user_errors
-def work(fs, channel, data):
+def work(fs, channel, correlation_id, data):
     """Read a message, split the header and send the remainder to the backend store."""
+    # Adding correlation ID to context
+    LOG.add_correlation_id(correlation_id)
+
     filepath = data['filepath']
     LOG.info(f"Processing {filepath}")
 
@@ -68,7 +71,7 @@ def work(fs, channel, data):
     # Sending a progress message to CentralEGA
     org_msg['status'] = 'PROCESSING'
     LOG.debug(f'Sending message to CentralEGA: {data}')
-    publish(org_msg, channel, 'cega', 'files.processing')
+    publish(org_msg, channel, 'cega', 'files.processing', correlation_id)
     org_msg.pop('status', None)
 
     # Strip the header out and copy the rest of the file to the vault

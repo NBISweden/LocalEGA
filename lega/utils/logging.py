@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Logs Formatter."""
 
-from logging import Formatter
+import logging
 from logging.handlers import SocketHandler as handler  # or DatagramHandler ?
 import json
 import re
@@ -29,7 +29,7 @@ class LEGAHandler(handler):
         return self.format(record).encode('utf-8')
 
 
-class JSONFormatter(Formatter):
+class JSONFormatter(logging.Formatter):
     """Json Logs formatting.
 
     Mainly used for ELK stack.
@@ -37,7 +37,7 @@ class JSONFormatter(Formatter):
 
     def __init__(self, *args, **kwargs):
         """Initialize formatter."""
-        Formatter.__init__(self, *args, **kwargs)
+        super().__init__(self, *args, **kwargs)
         standard_formatters = re.compile(r'\((.+?)\)', re.IGNORECASE)
         self._fields = standard_formatters.findall(self._fmt)
 
@@ -61,3 +61,20 @@ class JSONFormatter(Formatter):
             log_record['stack_info'] = self.formatStack(record.stack_info)
 
         return json.dumps(log_record)
+
+
+class LEGALogger(logging.LoggerAdapter):
+    """Logger class to handle the correlation id."""
+
+    def __init__(self, name):
+        """Initialize the logger."""
+        logger = logging.getLogger(name)
+        super().__init__(logger, {'correlation_id': None})
+
+    def add_correlation_id(self, correlation_id):
+        """Set the correlation_id."""
+        self.extra['correlation_id'] = correlation_id
+
+    def remove_correlation_id(self):
+        """Cancel the correlation_id."""
+        self.extra['correlation_id'] = None

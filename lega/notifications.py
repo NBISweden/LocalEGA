@@ -9,6 +9,7 @@
 import sys
 import logging
 import os
+import uuid
 import asyncio
 import uvloop
 
@@ -93,7 +94,8 @@ class Forwarder(asyncio.Protocol):
         if c:
             msg['encrypted_integrity'] = {'algorithm': 'sha256', 'checksum': c}
         # Sending
-        publish(msg, self.channel, 'cega', 'files.inbox')
+        correlation_id = str(uuid.uuid4())
+        publish(msg, self.channel, 'cega', 'files.inbox', correlation_id)
 
     def connection_lost(self, exc):
         """Close connection, inherited from ``asyncio.Protocol``."""

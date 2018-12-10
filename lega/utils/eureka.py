@@ -6,12 +6,14 @@ Eureka Discovery for LocalEGA.
 """
 import asyncio
 import aiohttp
-import logging
 import json
 import uuid
 from functools import wraps
 
 from ..conf import CONF
+from .logging import LEGALogger
+
+LOG = LEGALogger(__name__)
 
 eureka_status = {
     0: 'UP',
@@ -20,8 +22,6 @@ eureka_status = {
     3: 'OUT_OF_SERVICE',
     4: 'UNKNOWN',
 }
-
-LOG = logging.getLogger(__name__)
 
 
 def retry_loop(func):

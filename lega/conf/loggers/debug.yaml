@@ -9,6 +9,16 @@ loggers:
     handlers: [debugFile,console]
     propagate: True
     qualname: lega
+  crypt4gh:
+    level: DEBUG
+    handlers: [crypt4gh]
+    propagate: True
+    qualname: crypt4gh
+  lega-cryptor:
+    level: DEBUG
+    handlers: [crypt4gh]
+    propagate: True
+    qualname: lega-cryptor
 
 
 handlers:
@@ -18,6 +28,10 @@ handlers:
   console:
     class: logging.StreamHandler
     formatter: simple
+    stream: ext://sys.stderr
+  crypt4gh:
+    class: logging.StreamHandler
+    formatter: simple_no_correlation
     stream: ext://sys.stderr
   debugFile:
     class: logging.FileHandler
@@ -31,5 +45,8 @@ formatters:
     style: '{'
     datefmt: '%Y-%m-%d %H:%M:%S'
   simple:
+    format: '[{correlation_id}][{name:^10}][{levelname:^6}] (L{lineno}) {message}'
+    style: '{'
+  simple_no_correlation:
     format: '[{name:^10}][{levelname:^6}] (L{lineno}) {message}'
     style: '{'

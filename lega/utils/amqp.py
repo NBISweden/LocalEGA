@@ -1,13 +1,13 @@
 """Ensures communication with RabbitMQ Message Broker."""
 
-import logging
 import pika
 import json
 import uuid
 
 from ..conf import CONF
+from .logging import LEGALogger
 
-LOG = logging.getLogger(__name__)
+LOG = LEGALogger(__name__)
 
 
 def get_connection(domain, blocking=True):
@@ -55,8 +55,10 @@ def get_connection(domain, blocking=True):
     return pika.SelectConnection(pika.ConnectionParameters(**params))
 
 
-def publish(message, channel, exchange, routing, correlation_id=None):
+def publish(message, channel, exchange, routing, correlation_id):
     """Send a message to the local broker with ``path`` was updated."""
+    assert(correlation_id)
+    LOG.add_correlation_id(correlation_id)
     LOG.debug(f'Sending {message} to exchange: {exchange} [routing key: {routing}]')
     channel.basic_publish(exchange=exchange,
                           routing_key=routing,
@@ -64,6 +66,7 @@ def publish(message, channel, exchange, routing, correlation_id=None):
                           properties=pika.BasicProperties(correlation_id=correlation_id or str(uuid.uuid4()),
                                                           content_type='application/json',
                                                           delivery_mode=2))
+    LOG.remove_correlation_id()
 
 
 def consume(work, connection, from_queue, to_routing):
@@ -89,11 +92,12 @@ def consume(work, connection, from_queue, to_routing):
 
     def process_request(channel, method_frame, props, body):
         correlation_id = props.correlation_id
+        LOG.add_correlation_id(correlation_id)
         message_id = method_frame.delivery_tag
         LOG.debug(f'Consuming message {message_id} (Correlation ID: {correlation_id})')
 
         # Process message in JSON format
-        answer = work(json.loads(body))  # Exceptions should be already caught
+        answer = work(correlation_id, json.loads(body))  # Exceptions should be already caught
 
         # Publish the answer
         if answer:
@@ -103,6 +107,7 @@ def consume(work, connection, from_queue, to_routing):
         # Acknowledgment: Cancel the message resend in case MQ crashes
         LOG.debug(f'Sending ACK for message {message_id} (Correlation ID: {correlation_id})')
         channel.basic_ack(delivery_tag=method_frame.delivery_tag)
+        LOG.remove_correlation_id()
 
     # Let's do this
     try:
