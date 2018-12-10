@@ -235,20 +235,20 @@ fi
 
 cat >> ${PRIVATE}/lega.yml <<EOF
   # Stable ID mapper
-  id-mapper:
+  finalize:
     depends_on:
       - db
       - mq
     image: nbisweden/ega-base:dev
-    container_name: id-mapper
+    container_name: finalize
     labels:
-        lega_label: "id-mapper"
+        lega_label: "finalize"
     volumes:
        - ./lega/conf.ini:/etc/ega/conf.ini:ro
     restart: on-failure:3
     networks:
       - lega
-    entrypoint: ["gosu", "lega", "ega-id-mapper"]
+    entrypoint: ["gosu", "lega", "ega-finalize"]
 
   # Ingestion Workers
   ingest:
